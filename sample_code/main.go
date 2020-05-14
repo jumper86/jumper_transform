@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/jumper86/jumper_transform/packet"
+	"github.com/jumper86/jumper_transform/transform"
+
 	//"github.com/golang/protobuf/proto"
 	//"../transform"
 	//"github.com/jumper86/jumper_transform/transform"
@@ -283,90 +285,90 @@ func main() {
 
 
 	///////////////////////////////////////// 链接测试 /////////////////////////////////////////
-	/////////////////////////// json/xml ///////////////////////////
-//	PrivKeyLocal := []byte(`
-//-----BEGIN RSA PRIVATE KEY-----
-//MIICWwIBAAKBgQCnCnuWcNacRnqwDfSNLx7bbJLJM+foyxqSzp/M0fYqjhMp8voe
-//51PUEGetCvM2kAakmRue6MXQ3TKrV7L6d3XTYGabBPzwDd0KoucklVVOS2vi1E7U
-//V1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER8lll5EiUUT+T0vnq9wIDAQAB
-//AoGAfZo9Seb5CLNaR42GyK6Y1kdyrEYSaJJoHeGueTWbk24XbOCeQKSS/Q+E1bI5
-//JVrxE81o3nmLXT0mf35HP1yaRCrofCV7a4QBlD9CNkMfy68fJEA6gMFuVVAES6Fa
-//Zt1ENZ81NeENURUC+lLFSlUWm2Xbf+MZtCFIRE5Tj1HxvQkCQQDPTDZKpyqZ/1yg
-//PO1/Quu0iisDYROJMm4sHQowIYXkHA/pUQMEveomBGRLavWrN9t4oEotFAPi0qYW
-//847m7TmDAkEAzkkNyoz08+Dg4+SfwbjEyglyX7OkmOOGnCvEJldQm0wLZvrpJS6i
-//n24UiYx2Cg93BZrvD9Ce7oNEnwbnHG3yfQJAJtOce6ER3qQwwiaHSUXMhhU29zwQ
-//f6r9ba/Gv7sXq+EBre6phRLZL2O1MVcISph8t/w1yHmuPKa9yyC1TFV0ZwJADbeh
-//6SQybb04dy8OyI0G2QCD0IVbnqcSnnPymTIZNBp8b56jvks5mSxyxSrH9qdMnNzO
-//pNiUmPu1pnWJDMTq6QJAHIToUuuAN2z3pLpUJsM40T6sEwgbxiFPZ3iT4/T2Tgpy
-//BKLqQxR7jXKdl0iWYteC96pQ0bqytFse4lnmPMUCew==
-//-----END RSA PRIVATE KEY-----
-//`)
-//	//fmt.Printf("%s", PrivKeyLocal)
-//
-//	PubKeyRemote := []byte(`
-//-----BEGIN PUBLIC KEY-----
-//MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnCnuWcNacRnqwDfSNLx7bbJLJ
-//M+foyxqSzp/M0fYqjhMp8voe51PUEGetCvM2kAakmRue6MXQ3TKrV7L6d3XTYGab
-//BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
-//8lll5EiUUT+T0vnq9wIDAQAB
-//-----END PUBLIC KEY-----
-//`)
-//
-//	type s1 struct{
-//		Name string
-//		Age int
-//		Male bool
-//	}
-//
-//	test1 := s1{
-//		Name: "wang",
-//		Age: 1,
-//		Male: true,
-//	}
-//
-//
-//	var polink transform.Transform
-//	polink.AddOp(transform.PacketJson, true, nil)
-//	//polink.AddOp(transform.PacketXml, true, nil)
-//
-//	polink.AddOp(transform.CompressGzip, true, nil)
-//	//polink.AddOp(transform.CompressZlib, true, nil)
-//
-//	//polink.AddOp(transform.EncryptAes, true, []interface{}{[]byte("abcdefghijklmnop")})
-//	//polink.AddOp(transform.EncryptDes, true, []interface{}{[]byte("ijklmnop")})
-//	polink.AddOp(transform.EncryptRsa, true, []interface{}{PubKeyRemote, PrivKeyLocal})
-//	var rst1 []byte
-//	err := polink.Execute(test1, &rst1)
-//	if err != nil{
-//		fmt.Printf("err: %s", err)
-//		return
-//	}
-//
-//
-//
-//	polink.Reset()
-//	//polink.AddOp(transform.EncryptAes, false, []interface{}{[]byte("abcdefghijklmnop")})
-//	//polink.AddOp(transform.EncryptDes, false, []interface{}{[]byte("ijklmnop")})
-//	polink.AddOp(transform.EncryptRsa, false, []interface{}{PubKeyRemote, PrivKeyLocal})
-//
-//	polink.AddOp(transform.CompressGzip, false, nil)
-//	//polink.AddOp(transform.CompressZlib, false, nil)
-//
-//	//polink.AddOp(transform.PacketXml, false, nil)
-//	polink.AddOp(transform.PacketJson, false, nil)
-//	var test2 s1
-//	err = polink.Execute(rst1, &test2)
-//	if err != nil{
-//		fmt.Printf("err: %s", err)
-//		return
-//	}
-//	fmt.Printf("origin data: %v\n", test2)
-//
-//
-//
-//
-//
-//	fmt.Println("--------------------------------------------------------")
+	///////////////////////// json/xml ///////////////////////////
+	PrivKeyLocal := []byte(`
+-----BEGIN RSA PRIVATE KEY-----
+MIICWwIBAAKBgQCnCnuWcNacRnqwDfSNLx7bbJLJM+foyxqSzp/M0fYqjhMp8voe
+51PUEGetCvM2kAakmRue6MXQ3TKrV7L6d3XTYGabBPzwDd0KoucklVVOS2vi1E7U
+V1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER8lll5EiUUT+T0vnq9wIDAQAB
+AoGAfZo9Seb5CLNaR42GyK6Y1kdyrEYSaJJoHeGueTWbk24XbOCeQKSS/Q+E1bI5
+JVrxE81o3nmLXT0mf35HP1yaRCrofCV7a4QBlD9CNkMfy68fJEA6gMFuVVAES6Fa
+Zt1ENZ81NeENURUC+lLFSlUWm2Xbf+MZtCFIRE5Tj1HxvQkCQQDPTDZKpyqZ/1yg
+PO1/Quu0iisDYROJMm4sHQowIYXkHA/pUQMEveomBGRLavWrN9t4oEotFAPi0qYW
+847m7TmDAkEAzkkNyoz08+Dg4+SfwbjEyglyX7OkmOOGnCvEJldQm0wLZvrpJS6i
+n24UiYx2Cg93BZrvD9Ce7oNEnwbnHG3yfQJAJtOce6ER3qQwwiaHSUXMhhU29zwQ
+f6r9ba/Gv7sXq+EBre6phRLZL2O1MVcISph8t/w1yHmuPKa9yyC1TFV0ZwJADbeh
+6SQybb04dy8OyI0G2QCD0IVbnqcSnnPymTIZNBp8b56jvks5mSxyxSrH9qdMnNzO
+pNiUmPu1pnWJDMTq6QJAHIToUuuAN2z3pLpUJsM40T6sEwgbxiFPZ3iT4/T2Tgpy
+BKLqQxR7jXKdl0iWYteC96pQ0bqytFse4lnmPMUCew==
+-----END RSA PRIVATE KEY-----
+`)
+	//fmt.Printf("%s", PrivKeyLocal)
+
+	PubKeyRemote := []byte(`
+-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnCnuWcNacRnqwDfSNLx7bbJLJ
+M+foyxqSzp/M0fYqjhMp8voe51PUEGetCvM2kAakmRue6MXQ3TKrV7L6d3XTYGab
+BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
+8lll5EiUUT+T0vnq9wIDAQAB
+-----END PUBLIC KEY-----
+`)
+
+	type s1 struct{
+		Name string
+		Age int
+		Male bool
+	}
+
+	test1 := s1{
+		Name: "wang",
+		Age: 1,
+		Male: true,
+	}
+
+
+	var polink transform.Transform
+	polink.AddOp(transform.PacketJson, true, nil)
+	//polink.AddOp(transform.PacketXml, true, nil)
+
+	polink.AddOp(transform.CompressGzip, true, nil)
+	//polink.AddOp(transform.CompressZlib, true, nil)
+
+	//polink.AddOp(transform.EncryptAes, true, []interface{}{[]byte("abcdefghijklmnop")})
+	//polink.AddOp(transform.EncryptDes, true, []interface{}{[]byte("ijklmnop")})
+	polink.AddOp(transform.EncryptRsa, true, []interface{}{PubKeyRemote, PrivKeyLocal})
+	var rst1 []byte
+	err := polink.Execute(test1, &rst1)
+	if err != nil{
+		fmt.Printf("err: %s", err)
+		return
+	}
+
+
+
+	polink.Reset()
+	//polink.AddOp(transform.EncryptAes, false, []interface{}{[]byte("abcdefghijklmnop")})
+	//polink.AddOp(transform.EncryptDes, false, []interface{}{[]byte("ijklmnop")})
+	polink.AddOp(transform.EncryptRsa, false, []interface{}{PubKeyRemote, PrivKeyLocal})
+
+	polink.AddOp(transform.CompressGzip, false, nil)
+	//polink.AddOp(transform.CompressZlib, false, nil)
+
+	//polink.AddOp(transform.PacketXml, false, nil)
+	polink.AddOp(transform.PacketJson, false, nil)
+	var test2 s1
+	err = polink.Execute(rst1, &test2)
+	if err != nil{
+		fmt.Printf("err: %s", err)
+		return
+	}
+	fmt.Printf("origin data: %v\n", test2)
+
+
+
+
+
+	fmt.Println("--------------------------------------------------------")
 	/////////////////////////// protobuf ///////////////////////////
 
 	//polink.Reset()
