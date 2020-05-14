@@ -1,12 +1,11 @@
 package main
 
 import (
+	"github.com/golang/protobuf/proto"
 	"github.com/jumper86/jumper_transform/packet"
 	"github.com/jumper86/jumper_transform/transform"
 
-	//"github.com/golang/protobuf/proto"
-	//"../transform"
-	//"github.com/jumper86/jumper_transform/transform"
+
 	"fmt"
 )
 
@@ -74,9 +73,9 @@ func main() {
 
 	//bodyData := "guangzhou/fangcun/vip/company"
 	//
-	//p := &zqpacket.StringMessage{
+	//p := &packet.StringMessage{
 	//	Body: proto.String(bodyData),
-	//	Header: &zqpacket.Header{
+	//	Header: &packet.Header{
 	//		MessageId: proto.String("20-05"),
 	//		Topic:     proto.String("golang"),
 	//	},
@@ -90,11 +89,11 @@ func main() {
 	//fmt.Printf("rst1: %v", rst1)
 	//
 	//
-	//var test2 zqpacket.StringMessage
+	//var test2 packet.StringMessage
 	//var op2 packet.PacketOpProtobuf
 	//op2.Init(false, nil)
 	//op2.Operate(rst1, &test2)
-	////注意此处　打印　&test2 和　test2　是不一样的，因为 *(zqpacket.StringMessage) 是定义了 String() 函数的
+	////注意此处　打印　&test2 和　test2　是不一样的，因为 *(packet.StringMessage) 是定义了 String() 函数的
 	//fmt.Println("rst2: ", &test2)
 
 	////////////////xml////////////////
@@ -371,52 +370,52 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 	fmt.Println("--------------------------------------------------------")
 	/////////////////////////// protobuf ///////////////////////////
 
-	//polink.Reset()
-	////bodyData := "guangzhou/fangcun/vip/company"
-	//
-	////p := &zqpacket.StringMessage{
-	////	Body: proto.String(bodyData),
-	////	Header: &zqpacket.Header{
-	////		MessageId: proto.String("20-05"),
-	////		Topic:     proto.String("golang"),
-	////	},
-	////}
-	//
-	//polink.AddOp(transform.PacketJson, true, nil)
-	////polink.AddOp(transform.PacketXml, true, nil)
-	////polink.AddOp(transform.PacketProtobuf, true, nil)
-	//
-	//polink.AddOp(transform.CompressGzip, true, nil)
-	////polink.AddOp(transform.CompressZlib, true, nil)
-	//
-	////polink.AddOp(transform.EncryptAes, true, []interface{}{[]byte("abcdefghijklmnop")})
-	////polink.AddOp(transform.EncryptDes, true, []interface{}{[]byte("ijklmnop")})
-	//polink.AddOp(transform.EncryptRsa, true, []interface{}{PubKeyRemote, PrivKeyLocal})
-	//var rst11 []byte
-	//err = polink.Execute(p, &rst11)
-	//if err != nil{
-	//	fmt.Printf("err: %s", err)
-	//	return
-	//}
-	//
-	//
-	//
-	////var protobufrst zqpacket.StringMessage
-	//polink.Reset()
-	////polink.AddOp(transform.EncryptAes, false, []interface{}{[]byte("abcdefghijklmnop")})
-	////polink.AddOp(transform.EncryptDes, false, []interface{}{[]byte("ijklmnop")})
-	//polink.AddOp(transform.EncryptRsa, false, []interface{}{PubKeyRemote, PrivKeyLocal})
-	//
-	//polink.AddOp(transform.CompressGzip, false, nil)
-	////polink.AddOp(transform.CompressZlib, false, nil)
-	//
-	////polink.AddOp(transform.PacketXml, false, nil)
-	//polink.AddOp(transform.PacketJson, false, nil)
-	////polink.AddOp(transform.PacketProtobuf, false, nil)
-	//err = polink.Execute(rst11, &protobufrst)
-	//if err != nil{
-	//	fmt.Printf("err: %s", err)
-	//	return
-	//}
-	//fmt.Printf("origin data: %v\n", &protobufrst)
+	polink.Reset()
+	bodyData := "guangzhou/fangcun/vip/company"
+
+	p := &packet.StringMessage{
+		Body: proto.String(bodyData),
+		Header: &packet.Header{
+			MessageId: proto.String("20-05"),
+			Topic:     proto.String("golang"),
+		},
+	}
+
+	polink.AddOp(transform.PacketJson, true, nil)
+	//polink.AddOp(transform.PacketXml, true, nil)
+	//polink.AddOp(transform.PacketProtobuf, true, nil)
+
+	polink.AddOp(transform.CompressGzip, true, nil)
+	//polink.AddOp(transform.CompressZlib, true, nil)
+
+	//polink.AddOp(transform.EncryptAes, true, []interface{}{[]byte("abcdefghijklmnop")})
+	//polink.AddOp(transform.EncryptDes, true, []interface{}{[]byte("ijklmnop")})
+	polink.AddOp(transform.EncryptRsa, true, []interface{}{PubKeyRemote, PrivKeyLocal})
+	var rst11 []byte
+	err = polink.Execute(p, &rst11)
+	if err != nil{
+		fmt.Printf("err: %s", err)
+		return
+	}
+
+
+
+	var protobufrst packet.StringMessage
+	polink.Reset()
+	//polink.AddOp(transform.EncryptAes, false, []interface{}{[]byte("abcdefghijklmnop")})
+	//polink.AddOp(transform.EncryptDes, false, []interface{}{[]byte("ijklmnop")})
+	polink.AddOp(transform.EncryptRsa, false, []interface{}{PubKeyRemote, PrivKeyLocal})
+
+	polink.AddOp(transform.CompressGzip, false, nil)
+	//polink.AddOp(transform.CompressZlib, false, nil)
+
+	//polink.AddOp(transform.PacketXml, false, nil)
+	polink.AddOp(transform.PacketJson, false, nil)
+	//polink.AddOp(transform.PacketProtobuf, false, nil)
+	err = polink.Execute(rst11, &protobufrst)
+	if err != nil{
+		fmt.Printf("err: %s", err)
+		return
+	}
+	fmt.Printf("origin data: %v\n", &protobufrst)
 }
