@@ -1,4 +1,4 @@
-package package_op
+package transform
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/jumper86/jumper_transform/encrypt"
 )
 
-// 使用一系列　PackageOp 来构造一条操作链，　
+// 使用一系列　Operation 来构造一条操作链，　
 //　对于封包过程来说，　输入为　interface{}, 输出为　[]byte
 //　对于解包过程来说，　输入为 []byte, 输出为 interface{}
 
@@ -19,13 +19,13 @@ import (
 // 这是因为　所有涉及到的数据只有两种情况
 // 1. 入参传入，因此不同协程不会具有共用数据　2. 初始化的成员如direct或者密钥，他们都是初始化之后不再变化，即只进行读取，不进行写入，因此可以并发访问
 
-//因此在实际项目使用中可以考虑定义一个全局的 map[string]PackageOpLink　不同的需求定义不同的　PackageOpLink　放入其中．
+//因此在实际项目使用中可以考虑定义一个全局的 map[string]Transform　不同的需求定义不同的　Transform　放入其中．
 
-type PackageOpLink struct{
-	opLink []PackageOp
+type Transform struct{
+	opLink []Operation
 }
 
-func (self *PackageOpLink) checkParam(opType PackageOpType, direct bool, params []interface{}) bool{
+func (self *Transform) checkParam(opType OperationType, direct bool, params []interface{}) bool{
 	if opType <= PackageOpMin || opType >=PackageOpMax{
 		fmt.Println("invalid opType.")
 		return false
@@ -49,12 +49,12 @@ func (self *PackageOpLink) checkParam(opType PackageOpType, direct bool, params 
 	return true
 }
 
-func (self *PackageOpLink) AddOp(opType PackageOpType, direct bool, params []interface{}) bool{
+func (self *Transform) AddOp(opType OperationType, direct bool, params []interface{}) bool{
 	if !self.checkParam(opType, direct, params){
 		return false
 	}
 
-	var op PackageOp
+	var op Operation
 
 	switch opType{
 	//编码
@@ -125,7 +125,7 @@ func (self *PackageOpLink) AddOp(opType PackageOpType, direct bool, params []int
 
 }
 
-func (self *PackageOpLink) Execute(input interface{}, output interface{}) error{
+func (self *Transform) Execute(input interface{}, output interface{}) error{
 
 	//这里是一个链式反应，因此需要根据op类型来构建中间类型
 	//中间过程的输出都是 []byte
@@ -153,7 +153,7 @@ func (self *PackageOpLink) Execute(input interface{}, output interface{}) error{
 }
 
 
-func (self *PackageOpLink) Reset() {
+func (self *Transform) Reset() {
 	if len(self.opLink)  != 0{
 		self.opLink = self.opLink[:0]
 	}

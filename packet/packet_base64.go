@@ -84,7 +84,6 @@ func (*PacketOpBase64) Unpack(packData []byte, obj interface{}) error {
 		return errors.New("invalid param, should use *[]byte")
 	}
 
-	defer log.TraceLog("PacketOpBase64.Unpack")()
 	rst := make([]byte, base64.StdEncoding.DecodedLen(len(packData)))
 	_, err := base64.StdEncoding.Decode(rst, packData)
 	if err != nil {
