@@ -8,11 +8,6 @@ import (
 	"github.com/jumper86/jumper_transform/log"
 )
 
-type Message struct {
-	Type    uint16
-	Content []byte
-}
-
 type packetOpBinary struct {
 	direct bool
 }
@@ -54,9 +49,9 @@ func (self *packetOpBinary) Operate(input interface{}, output interface{}) (bool
 //此函数中需要检查入参是否为 string / []byte
 func (*packetOpBinary) Pack(originData interface{}) ([]byte, error) {
 	defer log.TraceLog("packetOpBinary.Pack")()
-	msg, ok := originData.(*Message)
+	msg, ok := originData.(*interf.Message)
 	if !ok {
-		return nil, errors.New("invalid param type, use Message struct.")
+		return nil, errors.New("invalid param type, use interf.Message struct.")
 	}
 
 	rst := make([]byte, len(msg.Content)+2)
@@ -70,10 +65,10 @@ func (*packetOpBinary) Unpack(packData []byte, obj interface{}) error {
 
 	defer log.TraceLog("packetOpBinary.Unpack")()
 
-	var msg *Message
+	var msg *interf.Message
 	var ok bool
-	if msg, ok = obj.(*Message); !ok {
-		return errors.New("invalid param type, use Message struct.")
+	if msg, ok = obj.(*interf.Message); !ok {
+		return errors.New("invalid param type, use interf.Message struct.")
 	}
 
 	msg.Type = binary.BigEndian.Uint16(packData[:2])

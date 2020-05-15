@@ -15,6 +15,7 @@ const (
 	PacketJson
 	PacketXml
 	PacketProtobuf
+	PacketBinary
 
 	//压缩
 	CompressGzip

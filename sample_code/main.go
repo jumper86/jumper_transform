@@ -352,7 +352,9 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 		fmt.Printf("err: %s", err)
 		return
 	}
-	fmt.Printf("origin data: %v\n", test2)
+
+	fmt.Printf("test2: %v\n", test2)
+	fmt.Printf("origin data: %v\n", test1)
 
 	fmt.Println("--------------------------------------------------------")
 	/////////////////////////// protobuf ///////////////////////////
@@ -402,5 +404,40 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 		fmt.Printf("err: %s", err)
 		return
 	}
-	fmt.Printf("origin data: %v\n", &protobufrst)
+
+	fmt.Printf("protobufrst: %s\n", protobufrst.String())
+	fmt.Printf("origin data: %s\n", p.String())
+
+	//
+	//msg := &interf.Message{
+	//	Type:    1,
+	//	Content: []byte("this is a Message."),
+	//}
+	//polink.Reset()
+	//polink.AddOp(interf.PacketBinary, true, nil)
+	//polink.AddOp(interf.CompressGzip, true, nil)
+	//polink.AddOp(interf.EncryptRsa, true, []interface{}{PubKeyRemote, PrivKeyLocal})
+	//var rst12 []byte
+	//err = polink.Execute(msg, &rst12)
+	//if err != nil {
+	//	fmt.Printf("err: %s", err)
+	//	return
+	//}
+	////
+	//polink.Reset()
+	//polink.AddOp(interf.EncryptRsa, false, []interface{}{PubKeyRemote, PrivKeyLocal})
+	//polink.AddOp(interf.CompressGzip, false, nil)
+	//polink.AddOp(interf.PacketBinary, false, nil)
+	//
+	//var msgrst interf.Message
+	//err = polink.Execute(rst12, &msgrst)
+	//if err != nil {
+	//	fmt.Printf("err: %s", err)
+	//	return
+	//}
+	//
+	//fmt.Printf("msgrst: %v\n", msgrst)
+	//
+	//fmt.Printf("origin data: %v\n", msg)
+
 }

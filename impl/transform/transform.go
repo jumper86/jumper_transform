@@ -80,6 +80,10 @@ func (self *transform) AddOp(opType interf.OperationType, direct bool, params []
 		op = packet.NewpacketOpProtobuf(direct, nil)
 		break
 
+	case interf.PacketBinary:
+		op = packet.NewpacketOpBinary(direct, nil)
+		break
+
 		//压缩
 	case interf.CompressGzip:
 		op = compress.NewcompressOpGzip(direct, nil)
