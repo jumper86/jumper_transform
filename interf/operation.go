@@ -1,11 +1,9 @@
-package transform
-
+package interf
 
 //transform 表示一个操作，　包含三种类型：
 //1. encode
 //2. compress
 //3. encrypt
-
 
 //定义打包和加密类型
 type OperationType int
@@ -32,31 +30,26 @@ const (
 	PackageOpMax
 )
 
-
-
 //操作接口
-type Operation interface{
-	Init(direct bool, params []interface{}) bool //direct 表示操作方向, true　表示　编码/压缩/加密，　false 表示　解码/解压/解密
-	Operate(input interface{}, output interface{}) (bool,error)
-
+type Operation interface {
+	//Init(direct bool, params []interface{}) bool //direct 表示操作方向, true　表示　编码/压缩/加密，　false 表示　解码/解压/解密
+	Operate(input interface{}, output interface{}) (bool, error)
 }
 
-type PacketOp interface{
+type PacketOp interface {
 	Operation
 	Pack(originData interface{}) ([]byte, error)
 	Unpack(packData []byte, obj interface{}) error
 }
 
-type CompressOp interface{
+type CompressOp interface {
 	Operation
 	Compress(data []byte) ([]byte, error)
 	Decompress(data []byte) ([]byte, error)
 }
 
-type EncryptOp interface{
+type EncryptOp interface {
 	Operation
 	Encrypt(data []byte) ([]byte, error)
 	Decrypt(data []byte) ([]byte, error)
 }
-
-

@@ -2,37 +2,43 @@ package packet
 
 import (
 	"errors"
+	"github.com/jumper86/jumper_transform/interf"
 
-	"github.com/golang/protobuf/proto"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"github.com/jumper86/jumper_transform/log"
 )
 
-type PacketOpProtobuf struct {
+type packetOpProtobuf struct {
 	direct bool
 }
 
+func NewpacketOpProtobuf(direct bool, params []interface{}) interf.PacketOp {
+	var op packetOpProtobuf
+	op.init(direct, params)
+	return &op
+}
 
-func (self *PacketOpProtobuf) Init(direct bool, params []interface{}) bool{
+func (self *packetOpProtobuf) init(direct bool, params []interface{}) bool {
 	self.direct = direct
 	return true
 }
 
-func (self *PacketOpProtobuf) Operate(input interface{}, output interface{}) (bool,error){
+func (self *packetOpProtobuf) Operate(input interface{}, output interface{}) (bool, error) {
 
-	if self.direct{
+	if self.direct {
 		tmpOutput, err := self.Pack(input)
-		if err != nil{
+		if err != nil {
 			fmt.Printf("pack failed. err: %s", err)
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
 		return true, nil
 
-	}else{
+	} else {
 		//fmt.Printf("output: %v", output)
 		err := self.Unpack(input.([]byte), output)
-		if err != nil{
+		if err != nil {
 			fmt.Printf("unpack failed. err: %s", err)
 			return false, err
 		}
@@ -42,9 +48,9 @@ func (self *PacketOpProtobuf) Operate(input interface{}, output interface{}) (bo
 	return true, nil
 }
 
-func (*PacketOpProtobuf) Pack(originData interface{}) ([]byte, error) {
+func (*packetOpProtobuf) Pack(originData interface{}) ([]byte, error) {
 	//此处需要将interface{} -> proto.Message， 使用类型断言即可
-	defer log.TraceLog("PacketOpProtobuf.Pack")()
+	defer log.TraceLog("packetOpProtobuf.Pack")()
 	data, ok := originData.(proto.Message)
 	if !ok {
 		return nil, errors.New("param not implement interface proto.Message.")
@@ -53,9 +59,9 @@ func (*PacketOpProtobuf) Pack(originData interface{}) ([]byte, error) {
 	return proto.Marshal(data)
 }
 
-func (*PacketOpProtobuf) Unpack(packData []byte, obj interface{}) error {
+func (*packetOpProtobuf) Unpack(packData []byte, obj interface{}) error {
 
-	defer log.TraceLog("PacketOpProtobuf.Unpack")()
+	defer log.TraceLog("packetOpProtobuf.Unpack")()
 	decodedData, ok := obj.(proto.Message)
 	if !ok {
 		return errors.New("param not implement interface proto.Message.")

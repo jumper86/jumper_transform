@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/golang/protobuf/proto"
-	"github.com/jumper86/jumper_transform/packet"
-	"github.com/jumper86/jumper_transform/transform"
-
+	"github.com/jumper86/jumper_transform/impl/packet"
+	"github.com/jumper86/jumper_transform/impl/transform"
+	"github.com/jumper86/jumper_transform/interf"
 
 	"fmt"
 )
@@ -12,40 +12,39 @@ import (
 func main() {
 	////////////////base64////////////////
 
-	//var op packet.PacketOpBase64
+	//var op packet.packetOpBase64
 	//op.Init(true, nil)
 	//originData := []byte("this is a test.")
 	//var rstData []byte
 	//op.Operate(originData, &rstData)
 	//fmt.Printf("rst: %s\n", rstData)
 	//
-	//var opr packet.PacketOpBase64
+	//var opr packet.packetOpBase64
 	//opr.Init(false, nil)
 	//
 	//var rstrData []byte
 	//opr.Operate(rstData, &rstrData)
 	//fmt.Printf("rstr: %s\n", rstrData)
 
-
-	var op packet.PacketOpBinary
-	op.Init(true, nil)
-	originData := &packet.Message{
-		Type: 8,
-		Content: []byte{1,2,3,4,5,6},
-	}
-	var rstData []byte
-	op.Operate(originData, &rstData)
-	fmt.Printf("rst: %v\n", rstData)
-
-	var opr packet.PacketOpBinary
-	opr.Init(false, nil)
-	var rstrData packet.Message
-	opr.Operate(rstData, &rstrData)
-	fmt.Printf("rstr: %v\n", rstrData)
+	//var op packet.packetOpBinary
+	//op.Init(true, nil)
+	//originData := &packet.Message{
+	//	Type: 8,
+	//	Content: []byte{1,2,3,4,5,6},
+	//}
+	//var rstData []byte
+	//op.Operate(originData, &rstData)
+	//fmt.Printf("rst: %v\n", rstData)
+	//
+	//var opr packet.packetOpBinary
+	//opr.Init(false, nil)
+	//var rstrData packet.Message
+	//opr.Operate(rstData, &rstrData)
+	//fmt.Printf("rstr: %v\n", rstrData)
 
 	////////////////json////////////////
 
-	//var op packet.PacketOpJson
+	//var op packet.packetOpJson
 	//op.Init(true, nil)
 	//test1 := struct{
 	//	Name string
@@ -64,7 +63,7 @@ func main() {
 	//	Age int
 	//}
 	//
-	//var op2 packet.PacketOpJson
+	//var op2 packet.packetOpJson
 	//op2.Init(false, nil)
 	//op2.Operate(rst1, &test2)
 	//fmt.Printf("rst2: %v", test2)
@@ -81,7 +80,7 @@ func main() {
 	//	},
 	//}
 	//
-	//var op packet.PacketOpProtobuf
+	//var op packet.packetOpProtobuf
 	//op.Init(true, nil)
 	//
 	//var rst1 []byte
@@ -90,7 +89,7 @@ func main() {
 	//
 	//
 	//var test2 packet.StringMessage
-	//var op2 packet.PacketOpProtobuf
+	//var op2 packet.packetOpProtobuf
 	//op2.Init(false, nil)
 	//op2.Operate(rst1, &test2)
 	////注意此处　打印　&test2 和　test2　是不一样的，因为 *(packet.StringMessage) 是定义了 String() 函数的
@@ -113,7 +112,7 @@ func main() {
 	////	Age: 1,
 	////}
 	//
-	//var op packet.PacketOpXml
+	//var op packet.packetOpXml
 	//op.Init(true, nil)
 	//var test1 info
 	//test1.Name = "wang"
@@ -126,14 +125,14 @@ func main() {
 	//
 	//
 	//var test2 info
-	//var op2 packet.PacketOpXml
+	//var op2 packet.packetOpXml
 	//op2.Init(false, nil)
 	//op2.Operate(rst1, &test2)
 	//fmt.Printf("rst2: %v", test2)
 
 	////////////////aes////////////////
 
-	//var op encrypt.EncryptOpAes
+	//var op encrypt.encryptOpAes
 	//params := make([]interface{}, 0)
 	//params = append(params, []byte("abcdefghijklmnop"))
 	//op.Init(true, params)
@@ -144,14 +143,14 @@ func main() {
 	//fmt.Printf("rst1: %x\n", rst1)
 	//
 	//var test2 []byte
-	//var op2 encrypt.EncryptOpAes
+	//var op2 encrypt.encryptOpAes
 	//op2.Init(false, params)
 	//op2.Operate(rst1, &test2)
 	//fmt.Printf("rst2: %s", test2)
 
 	////////////////des////////////////
 
-	//var op encrypt.EncryptOpDes
+	//var op encrypt.encryptOpDes
 	//params := make([]interface{}, 0)
 	//params = append(params, []byte("ijklmnop"))
 	//op.Init(true, params)
@@ -162,64 +161,63 @@ func main() {
 	//fmt.Printf("rst1: %x\n", rst1)
 	//
 	//var test2 []byte
-	//var op2 encrypt.EncryptOpDes
+	//var op2 encrypt.encryptOpDes
 	//op2.Init(false, params)
 	//op2.Operate(rst1, &test2)
 	//fmt.Printf("rst2: %s", test2)
 
 	////////////////rsa////////////////
 
-
 	// !!!此处注意，不要在密钥公钥中的某行前面留空格，并且应该使用``，不是""
 
-//	PrivKeyLocal := []byte(`
-//-----BEGIN RSA PRIVATE KEY-----
-//MIICWwIBAAKBgQCnCnuWcNacRnqwDfSNLx7bbJLJM+foyxqSzp/M0fYqjhMp8voe
-//51PUEGetCvM2kAakmRue6MXQ3TKrV7L6d3XTYGabBPzwDd0KoucklVVOS2vi1E7U
-//V1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER8lll5EiUUT+T0vnq9wIDAQAB
-//AoGAfZo9Seb5CLNaR42GyK6Y1kdyrEYSaJJoHeGueTWbk24XbOCeQKSS/Q+E1bI5
-//JVrxE81o3nmLXT0mf35HP1yaRCrofCV7a4QBlD9CNkMfy68fJEA6gMFuVVAES6Fa
-//Zt1ENZ81NeENURUC+lLFSlUWm2Xbf+MZtCFIRE5Tj1HxvQkCQQDPTDZKpyqZ/1yg
-//PO1/Quu0iisDYROJMm4sHQowIYXkHA/pUQMEveomBGRLavWrN9t4oEotFAPi0qYW
-//847m7TmDAkEAzkkNyoz08+Dg4+SfwbjEyglyX7OkmOOGnCvEJldQm0wLZvrpJS6i
-//n24UiYx2Cg93BZrvD9Ce7oNEnwbnHG3yfQJAJtOce6ER3qQwwiaHSUXMhhU29zwQ
-//f6r9ba/Gv7sXq+EBre6phRLZL2O1MVcISph8t/w1yHmuPKa9yyC1TFV0ZwJADbeh
-//6SQybb04dy8OyI0G2QCD0IVbnqcSnnPymTIZNBp8b56jvks5mSxyxSrH9qdMnNzO
-//pNiUmPu1pnWJDMTq6QJAHIToUuuAN2z3pLpUJsM40T6sEwgbxiFPZ3iT4/T2Tgpy
-//BKLqQxR7jXKdl0iWYteC96pQ0bqytFse4lnmPMUCew==
-//-----END RSA PRIVATE KEY-----
-//`)
-//	//fmt.Printf("%s", PrivKeyLocal)
-//
-//	PubKeyRemote := []byte(`
-//-----BEGIN PUBLIC KEY-----
-//MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnCnuWcNacRnqwDfSNLx7bbJLJ
-//M+foyxqSzp/M0fYqjhMp8voe51PUEGetCvM2kAakmRue6MXQ3TKrV7L6d3XTYGab
-//BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
-//8lll5EiUUT+T0vnq9wIDAQAB
-//-----END PUBLIC KEY-----
-//`)
-//
-//		var op encrypt.EncryptOpRsa
-//		params := make([]interface{}, 0)
-//		params = append(params, PubKeyRemote)
-//		params = append(params, PrivKeyLocal)
-//		op.Init(true, params)
-//
-//		param1 := []byte("this is a rsa test")
-//		var rst1 []byte
-//		op.Operate(param1, &rst1)
-//		fmt.Printf("rst1: %x\n", rst1)
-//
-//		var test2 []byte
-//		var op2 encrypt.EncryptOpRsa
-//		op2.Init(false, params)
-//		op2.Operate(rst1, &test2)
-//		fmt.Printf("rst2: %s", test2)
+	//	PrivKeyLocal := []byte(`
+	//-----BEGIN RSA PRIVATE KEY-----
+	//MIICWwIBAAKBgQCnCnuWcNacRnqwDfSNLx7bbJLJM+foyxqSzp/M0fYqjhMp8voe
+	//51PUEGetCvM2kAakmRue6MXQ3TKrV7L6d3XTYGabBPzwDd0KoucklVVOS2vi1E7U
+	//V1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER8lll5EiUUT+T0vnq9wIDAQAB
+	//AoGAfZo9Seb5CLNaR42GyK6Y1kdyrEYSaJJoHeGueTWbk24XbOCeQKSS/Q+E1bI5
+	//JVrxE81o3nmLXT0mf35HP1yaRCrofCV7a4QBlD9CNkMfy68fJEA6gMFuVVAES6Fa
+	//Zt1ENZ81NeENURUC+lLFSlUWm2Xbf+MZtCFIRE5Tj1HxvQkCQQDPTDZKpyqZ/1yg
+	//PO1/Quu0iisDYROJMm4sHQowIYXkHA/pUQMEveomBGRLavWrN9t4oEotFAPi0qYW
+	//847m7TmDAkEAzkkNyoz08+Dg4+SfwbjEyglyX7OkmOOGnCvEJldQm0wLZvrpJS6i
+	//n24UiYx2Cg93BZrvD9Ce7oNEnwbnHG3yfQJAJtOce6ER3qQwwiaHSUXMhhU29zwQ
+	//f6r9ba/Gv7sXq+EBre6phRLZL2O1MVcISph8t/w1yHmuPKa9yyC1TFV0ZwJADbeh
+	//6SQybb04dy8OyI0G2QCD0IVbnqcSnnPymTIZNBp8b56jvks5mSxyxSrH9qdMnNzO
+	//pNiUmPu1pnWJDMTq6QJAHIToUuuAN2z3pLpUJsM40T6sEwgbxiFPZ3iT4/T2Tgpy
+	//BKLqQxR7jXKdl0iWYteC96pQ0bqytFse4lnmPMUCew==
+	//-----END RSA PRIVATE KEY-----
+	//`)
+	//	//fmt.Printf("%s", PrivKeyLocal)
+	//
+	//	PubKeyRemote := []byte(`
+	//-----BEGIN PUBLIC KEY-----
+	//MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnCnuWcNacRnqwDfSNLx7bbJLJ
+	//M+foyxqSzp/M0fYqjhMp8voe51PUEGetCvM2kAakmRue6MXQ3TKrV7L6d3XTYGab
+	//BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
+	//8lll5EiUUT+T0vnq9wIDAQAB
+	//-----END PUBLIC KEY-----
+	//`)
+	//
+	//		var op encrypt.encryptOpRsa
+	//		params := make([]interface{}, 0)
+	//		params = append(params, PubKeyRemote)
+	//		params = append(params, PrivKeyLocal)
+	//		op.Init(true, params)
+	//
+	//		param1 := []byte("this is a rsa test")
+	//		var rst1 []byte
+	//		op.Operate(param1, &rst1)
+	//		fmt.Printf("rst1: %x\n", rst1)
+	//
+	//		var test2 []byte
+	//		var op2 encrypt.encryptOpRsa
+	//		op2.Init(false, params)
+	//		op2.Operate(rst1, &test2)
+	//		fmt.Printf("rst2: %s", test2)
 
 	////////////////md5////////////////
 
-	//var op encrypt.EncryptOpMd5
+	//var op encrypt.encryptOpMd5
 	//op.Init(true, nil)
 	//
 	//param1 := []byte("this is a md5 test")
@@ -227,11 +225,9 @@ func main() {
 	//op.Operate(param1, &rst1)
 	//fmt.Printf("rst1: %x\n", rst1)
 
-
-
 	////////////////sha1////////////////
 
-	//var op encrypt.EncryptOpSha1
+	//var op encrypt.encryptOpSha1
 	//op.Init(true, nil)
 	//
 	//param1 := []byte("this is a sha1 test")
@@ -239,11 +235,9 @@ func main() {
 	//op.Operate(param1, &rst1)
 	//fmt.Printf("rst1: %x\n", rst1)
 
-
-
 	////////////////gzip////////////////
 
-	//var op compress.CompressOpGzip
+	//var op compress.compressOpGzip
 	//op.Init(true, nil)
 	//
 	//param1 := []byte("this is a gzip test")
@@ -255,7 +249,7 @@ func main() {
 	//copy(param2, rst1)
 	//
 	////fmt.Printf("param2: %s", param2)
-	//var op2 compress.CompressOpGzip
+	//var op2 compress.compressOpGzip
 	//op2.Init(false, nil)
 	//
 	//var test2 []byte
@@ -264,7 +258,7 @@ func main() {
 
 	////////////////zlib////////////////
 
-	//var op compress.CompressOpZlib
+	//var op compress.compressOpZlib
 	//op.Init(true, nil)
 	//
 	//param1 := []byte("this is a zlib test")
@@ -275,13 +269,12 @@ func main() {
 	//param2 := make([]byte, len(rst1))
 	//copy(param2, rst1)
 	//
-	//var op2 compress.CompressOpZlib
+	//var op2 compress.compressOpZlib
 	//op2.Init(false, nil)
 	//
 	//var test2 []byte
 	//op2.Operate(param2, &test2)
 	//fmt.Printf("rst2: %s\n", test2)
-
 
 	///////////////////////////////////////// 链接测试 /////////////////////////////////////////
 	///////////////////////// json/xml ///////////////////////////
@@ -313,59 +306,52 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 -----END PUBLIC KEY-----
 `)
 
-	type s1 struct{
+	type s1 struct {
 		Name string
-		Age int
+		Age  int
 		Male bool
 	}
 
 	test1 := s1{
 		Name: "wang",
-		Age: 1,
+		Age:  1,
 		Male: true,
 	}
 
-
 	var polink transform.Transform
-	polink.AddOp(transform.PacketJson, true, nil)
+	polink.AddOp(interf.PacketJson, true, nil)
 	//polink.AddOp(transform.PacketXml, true, nil)
 
-	polink.AddOp(transform.CompressGzip, true, nil)
+	polink.AddOp(interf.CompressGzip, true, nil)
 	//polink.AddOp(transform.CompressZlib, true, nil)
 
 	//polink.AddOp(transform.EncryptAes, true, []interface{}{[]byte("abcdefghijklmnop")})
 	//polink.AddOp(transform.EncryptDes, true, []interface{}{[]byte("ijklmnop")})
-	polink.AddOp(transform.EncryptRsa, true, []interface{}{PubKeyRemote, PrivKeyLocal})
+	polink.AddOp(interf.EncryptRsa, true, []interface{}{PubKeyRemote, PrivKeyLocal})
 	var rst1 []byte
 	err := polink.Execute(test1, &rst1)
-	if err != nil{
+	if err != nil {
 		fmt.Printf("err: %s", err)
 		return
 	}
-
-
 
 	polink.Reset()
 	//polink.AddOp(transform.EncryptAes, false, []interface{}{[]byte("abcdefghijklmnop")})
 	//polink.AddOp(transform.EncryptDes, false, []interface{}{[]byte("ijklmnop")})
-	polink.AddOp(transform.EncryptRsa, false, []interface{}{PubKeyRemote, PrivKeyLocal})
+	polink.AddOp(interf.EncryptRsa, false, []interface{}{PubKeyRemote, PrivKeyLocal})
 
-	polink.AddOp(transform.CompressGzip, false, nil)
+	polink.AddOp(interf.CompressGzip, false, nil)
 	//polink.AddOp(transform.CompressZlib, false, nil)
 
 	//polink.AddOp(transform.PacketXml, false, nil)
-	polink.AddOp(transform.PacketJson, false, nil)
+	polink.AddOp(interf.PacketJson, false, nil)
 	var test2 s1
 	err = polink.Execute(rst1, &test2)
-	if err != nil{
+	if err != nil {
 		fmt.Printf("err: %s", err)
 		return
 	}
 	fmt.Printf("origin data: %v\n", test2)
-
-
-
-
 
 	fmt.Println("--------------------------------------------------------")
 	/////////////////////////// protobuf ///////////////////////////
@@ -381,39 +367,37 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 		},
 	}
 
-	polink.AddOp(transform.PacketJson, true, nil)
+	polink.AddOp(interf.PacketJson, true, nil)
 	//polink.AddOp(transform.PacketXml, true, nil)
 	//polink.AddOp(transform.PacketProtobuf, true, nil)
 
-	polink.AddOp(transform.CompressGzip, true, nil)
+	polink.AddOp(interf.CompressGzip, true, nil)
 	//polink.AddOp(transform.CompressZlib, true, nil)
 
 	//polink.AddOp(transform.EncryptAes, true, []interface{}{[]byte("abcdefghijklmnop")})
 	//polink.AddOp(transform.EncryptDes, true, []interface{}{[]byte("ijklmnop")})
-	polink.AddOp(transform.EncryptRsa, true, []interface{}{PubKeyRemote, PrivKeyLocal})
+	polink.AddOp(interf.EncryptRsa, true, []interface{}{PubKeyRemote, PrivKeyLocal})
 	var rst11 []byte
 	err = polink.Execute(p, &rst11)
-	if err != nil{
+	if err != nil {
 		fmt.Printf("err: %s", err)
 		return
 	}
-
-
 
 	var protobufrst packet.StringMessage
 	polink.Reset()
 	//polink.AddOp(transform.EncryptAes, false, []interface{}{[]byte("abcdefghijklmnop")})
 	//polink.AddOp(transform.EncryptDes, false, []interface{}{[]byte("ijklmnop")})
-	polink.AddOp(transform.EncryptRsa, false, []interface{}{PubKeyRemote, PrivKeyLocal})
+	polink.AddOp(interf.EncryptRsa, false, []interface{}{PubKeyRemote, PrivKeyLocal})
 
-	polink.AddOp(transform.CompressGzip, false, nil)
+	polink.AddOp(interf.CompressGzip, false, nil)
 	//polink.AddOp(transform.CompressZlib, false, nil)
 
 	//polink.AddOp(transform.PacketXml, false, nil)
-	polink.AddOp(transform.PacketJson, false, nil)
+	polink.AddOp(interf.PacketJson, false, nil)
 	//polink.AddOp(transform.PacketProtobuf, false, nil)
 	err = polink.Execute(rst11, &protobufrst)
-	if err != nil{
+	if err != nil {
 		fmt.Printf("err: %s", err)
 		return
 	}

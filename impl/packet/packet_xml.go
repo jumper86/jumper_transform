@@ -1,36 +1,41 @@
 package packet
 
 import (
-	"github.com/jumper86/jumper_transform/log"
 	"encoding/xml"
 	"fmt"
+	"github.com/jumper86/jumper_transform/interf"
+	"github.com/jumper86/jumper_transform/log"
 )
 
-type PacketOpXml struct{
+type packetOpXml struct {
 	direct bool
 }
 
+func NewpacketOpXml(direct bool, params []interface{}) interf.PacketOp {
+	var op packetOpXml
+	op.init(direct, params)
+	return &op
+}
 
-
-func (self *PacketOpXml) Init(direct bool, params []interface{}) bool{
+func (self *packetOpXml) init(direct bool, params []interface{}) bool {
 	self.direct = direct
 	return true
 }
 
-func (self *PacketOpXml) Operate(input interface{}, output interface{}) (bool,error){
+func (self *packetOpXml) Operate(input interface{}, output interface{}) (bool, error) {
 
-	if self.direct{
+	if self.direct {
 		tmpOutput, err := self.Pack(input)
-		if err != nil{
+		if err != nil {
 			fmt.Printf("pack failed. err: %s", err)
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
 		return true, nil
 
-	}else{
+	} else {
 		err := self.Unpack(input.([]byte), output)
-		if err != nil{
+		if err != nil {
 			fmt.Printf("unpack failed. err: %s", err)
 			return false, err
 		}
@@ -39,15 +44,16 @@ func (self *PacketOpXml) Operate(input interface{}, output interface{}) (bool,er
 
 	return true, nil
 }
+
 //todo: xml是不能对 map 编码的, 这里需要添加检查
 //https://stackoverflow.com/questions/30928770/marshall-map-to-xml-in-go?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-func (*PacketOpXml) Pack(originData interface{}) ([]byte, error) {
-	defer log.TraceLog("PacketOpXml.Pack")()
+func (*packetOpXml) Pack(originData interface{}) ([]byte, error) {
+	defer log.TraceLog("packetOpXml.Pack")()
 	return xml.Marshal(originData)
 }
 
-func (*PacketOpXml) Unpack(packData []byte, obj interface{}) error {
-	defer log.TraceLog("PacketOpXml.Unpack")()
+func (*packetOpXml) Unpack(packData []byte, obj interface{}) error {
+	defer log.TraceLog("packetOpXml.Unpack")()
 
 	//fmt.Println("type: ", reflect.ValueOf(obj).Type())
 	err := xml.Unmarshal(packData, obj)

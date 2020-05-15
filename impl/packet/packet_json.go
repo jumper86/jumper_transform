@@ -1,34 +1,41 @@
 package packet
 
 import (
-	"github.com/jumper86/jumper_transform/log"
 	"encoding/json"
 	"fmt"
+	"github.com/jumper86/jumper_transform/interf"
+	"github.com/jumper86/jumper_transform/log"
 )
 
-type PacketOpJson struct {
+type packetOpJson struct {
 	direct bool
 }
 
-func (self *PacketOpJson) Init(direct bool, params []interface{}) bool{
+func NewpacketOpJson(direct bool, params []interface{}) interf.PacketOp {
+	var op packetOpJson
+	op.init(direct, params)
+	return &op
+}
+
+func (self *packetOpJson) init(direct bool, params []interface{}) bool {
 	self.direct = direct
 	return true
 }
 
-func (self *PacketOpJson) Operate(input interface{}, output interface{}) (bool,error){
+func (self *packetOpJson) Operate(input interface{}, output interface{}) (bool, error) {
 
-	if self.direct{
+	if self.direct {
 		tmpOutput, err := self.Pack(input)
-		if err != nil{
+		if err != nil {
 			fmt.Printf("pack failed. err: %s", err)
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
 		return true, nil
 
-	}else{
+	} else {
 		err := self.Unpack(input.([]byte), output)
-		if err != nil{
+		if err != nil {
 			fmt.Printf("unpack failed. err: %s", err)
 			return false, err
 		}
@@ -38,14 +45,14 @@ func (self *PacketOpJson) Operate(input interface{}, output interface{}) (bool,e
 	return true, nil
 }
 
-func (*PacketOpJson) Pack(originData interface{}) ([]byte, error) {
-	defer log.TraceLog("PacketOpJson.Pack")()
+func (*packetOpJson) Pack(originData interface{}) ([]byte, error) {
+	defer log.TraceLog("packetOpJson.Pack")()
 
 	return json.Marshal(originData)
 }
 
-func (*PacketOpJson) Unpack(packData []byte, obj interface{}) error {
-	defer log.TraceLog("PacketOpJson.Unpack")()
+func (*packetOpJson) Unpack(packData []byte, obj interface{}) error {
+	defer log.TraceLog("packetOpJson.Unpack")()
 
 	//关于解析动态内容：interface{} 参见如下网页：
 	// http://cizixs.com/2016/12/19/golang-json-guide

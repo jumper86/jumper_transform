@@ -6,17 +6,23 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"io"
+	"github.com/jumper86/jumper_transform/interf"
 	"github.com/jumper86/jumper_transform/log"
+	"io"
 )
 
-type EncryptOpDes struct {
+type encryptOpDes struct {
 	desKey []byte
 	direct bool
 }
 
+func NewencryptOpDes(direct bool, params []interface{}) interf.EncryptOp {
+	var op encryptOpDes
+	op.init(direct, params)
+	return &op
+}
 
-func (self *EncryptOpDes) Init(direct bool, params []interface{}) bool {
+func (self *encryptOpDes) init(direct bool, params []interface{}) bool {
 
 	if params == nil || len(params) != 1 {
 		fmt.Printf("invalid param count.")
@@ -30,7 +36,6 @@ func (self *EncryptOpDes) Init(direct bool, params []interface{}) bool {
 		return false
 	}
 
-
 	if len(self.desKey) != 64/8 {
 		fmt.Println("err desKey length, need 128/192/256 bit.")
 		return false
@@ -40,21 +45,20 @@ func (self *EncryptOpDes) Init(direct bool, params []interface{}) bool {
 	return true
 }
 
+func (self *encryptOpDes) Operate(input interface{}, output interface{}) (bool, error) {
 
-func (self *EncryptOpDes) Operate(input interface{}, output interface{}) (bool, error){
-
-	if self.direct{
+	if self.direct {
 		tmpOutput, err := self.Encrypt(input.([]byte))
-		if err != nil{
+		if err != nil {
 			fmt.Printf("pack failed. err: %s", err)
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
 		return true, nil
 
-	}else{
+	} else {
 		tmpOutput, err := self.Decrypt(input.([]byte))
-		if err != nil{
+		if err != nil {
 			fmt.Printf("unpack failed. err: %s", err)
 			return false, err
 		}
@@ -65,9 +69,9 @@ func (self *EncryptOpDes) Operate(input interface{}, output interface{}) (bool, 
 	return true, nil
 }
 
-func (self *EncryptOpDes) Encrypt(data []byte) ([]byte, error) {
+func (self *encryptOpDes) Encrypt(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("EncryptOpDes.Encrypt")()
+	defer log.TraceLog("encryptOpDes.Encrypt")()
 	if data == nil || self.desKey == nil {
 		return nil, errors.New("invalid self.desKey or data")
 	}
@@ -99,9 +103,9 @@ func (self *EncryptOpDes) Encrypt(data []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (self *EncryptOpDes) Decrypt(data []byte) ([]byte, error) {
+func (self *encryptOpDes) Decrypt(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("EncryptOpDes.Decrypt")()
+	defer log.TraceLog("encryptOpDes.Decrypt")()
 	block, err := des.NewCipher(self.desKey)
 	if err != nil {
 		panic(err)

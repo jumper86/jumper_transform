@@ -4,34 +4,40 @@ import (
 	"bytes"
 	"compress/gzip"
 	"fmt"
+	"github.com/jumper86/jumper_transform/interf"
 	"github.com/jumper86/jumper_transform/log"
 	"io"
 )
 
-type CompressOpGzip struct{
+type compressOpGzip struct {
 	direct bool
 }
 
+func NewcompressOpGzip(direct bool, params []interface{}) interf.CompressOp {
+	var op compressOpGzip
+	op.init(direct, params)
+	return &op
+}
 
-func (self *CompressOpGzip) Init(direct bool, params []interface{}) bool{
+func (self *compressOpGzip) init(direct bool, params []interface{}) bool {
 	self.direct = direct
 	return true
 }
 
-func (self *CompressOpGzip) Operate(input interface{}, output interface{}) (bool, error){
+func (self *compressOpGzip) Operate(input interface{}, output interface{}) (bool, error) {
 
-	if self.direct{
+	if self.direct {
 		tmpOutput, err := self.Compress(input.([]byte))
-		if err != nil{
+		if err != nil {
 			fmt.Printf("pack failed. err: %s", err)
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
 		return true, nil
 
-	}else{
+	} else {
 		tmpOutput, err := self.Decompress(input.([]byte))
-		if err != nil{
+		if err != nil {
 			fmt.Printf("unpack failed. err: %s", err)
 			return false, err
 		}
@@ -42,14 +48,14 @@ func (self *CompressOpGzip) Operate(input interface{}, output interface{}) (bool
 	return true, nil
 }
 
-func (self *CompressOpGzip) Compress(data []byte) ([]byte, error){
+func (self *compressOpGzip) Compress(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("CompressOpGzip.Compress")()
+	defer log.TraceLog("compressOpGzip.Compress")()
 	var buf bytes.Buffer
 	c := gzip.NewWriter(&buf)
 
 	_, err := c.Write(data)
-	if err != nil{
+	if err != nil {
 		fmt.Printf("compress err: %s", err)
 		return nil, err
 	}
@@ -61,12 +67,12 @@ func (self *CompressOpGzip) Compress(data []byte) ([]byte, error){
 	return buf.Bytes(), nil
 }
 
-func (self *CompressOpGzip) Decompress(data []byte) ([]byte, error){
+func (self *compressOpGzip) Decompress(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("CompressOpGzip.Decompress")()
+	defer log.TraceLog("compressOpGzip.Decompress")()
 	nr := bytes.NewReader(data)
 	dc, err := gzip.NewReader(nr)
-	if err != nil{
+	if err != nil {
 		fmt.Printf("decompress 1 err: %s", err)
 		return nil, err
 	}
@@ -74,11 +80,10 @@ func (self *CompressOpGzip) Decompress(data []byte) ([]byte, error){
 
 	var buf bytes.Buffer
 	_, err = io.Copy(&buf, dc)
-	if err != nil{
+	if err != nil {
 		fmt.Printf("decompress err: %s", err)
 		return nil, err
 	}
 
 	return buf.Bytes(), nil
 }
-

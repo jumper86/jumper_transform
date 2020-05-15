@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"github.com/jumper86/jumper_transform/interf"
 	"github.com/jumper86/jumper_transform/log"
 )
 
@@ -12,31 +13,35 @@ type Message struct {
 	Content []byte
 }
 
-
-type PacketOpBinary struct {
+type packetOpBinary struct {
 	direct bool
 }
 
+func NewpacketOpBinary(direct bool, params []interface{}) interf.PacketOp {
+	var op packetOpBinary
+	op.init(direct, params)
+	return &op
+}
 
-func (self *PacketOpBinary) Init(direct bool, params []interface{}) bool{
+func (self *packetOpBinary) init(direct bool, params []interface{}) bool {
 	self.direct = direct
 	return true
 }
 
-func (self *PacketOpBinary) Operate(input interface{}, output interface{}) (bool, error){
+func (self *packetOpBinary) Operate(input interface{}, output interface{}) (bool, error) {
 
-	if self.direct{
+	if self.direct {
 		tmpOutput, err := self.Pack(input)
-		if err != nil{
+		if err != nil {
 			fmt.Printf("pack failed. err: %s", err)
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
 		return true, nil
 
-	}else{
+	} else {
 		err := self.Unpack(input.([]byte), output)
-		if err != nil{
+		if err != nil {
 			fmt.Printf("unpack failed. err: %s", err)
 			return false, err
 		}
@@ -47,10 +52,10 @@ func (self *PacketOpBinary) Operate(input interface{}, output interface{}) (bool
 }
 
 //此函数中需要检查入参是否为 string / []byte
-func (*PacketOpBinary) Pack(originData interface{}) ([]byte, error) {
-	defer log.TraceLog("PacketOpBinary.Pack")()
-	msg,ok := originData.(*Message)
-	if !ok{
+func (*packetOpBinary) Pack(originData interface{}) ([]byte, error) {
+	defer log.TraceLog("packetOpBinary.Pack")()
+	msg, ok := originData.(*Message)
+	if !ok {
 		return nil, errors.New("invalid param type, use Message struct.")
 	}
 
@@ -61,13 +66,13 @@ func (*PacketOpBinary) Pack(originData interface{}) ([]byte, error) {
 
 }
 
-func (*PacketOpBinary) Unpack(packData []byte, obj interface{}) error {
+func (*packetOpBinary) Unpack(packData []byte, obj interface{}) error {
 
-	defer log.TraceLog("PacketOpBinary.Unpack")()
+	defer log.TraceLog("packetOpBinary.Unpack")()
 
 	var msg *Message
 	var ok bool
-	if msg,ok = obj.(*Message); !ok{
+	if msg, ok = obj.(*Message); !ok {
 		return errors.New("invalid param type, use Message struct.")
 	}
 

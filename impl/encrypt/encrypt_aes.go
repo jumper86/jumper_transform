@@ -6,18 +6,23 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"io"
+	"github.com/jumper86/jumper_transform/interf"
 	"github.com/jumper86/jumper_transform/log"
+	"io"
 )
 
-type EncryptOpAes struct {
+type encryptOpAes struct {
 	aesKey []byte
 	direct bool
 }
 
+func NewencryptOpAes(direct bool, params []interface{}) interf.EncryptOp {
+	var op encryptOpAes
+	op.init(direct, params)
+	return &op
+}
 
-
-func (self *EncryptOpAes) Init(direct bool, params []interface{}) bool {
+func (self *encryptOpAes) init(direct bool, params []interface{}) bool {
 
 	if params == nil || len(params) != 1 {
 		fmt.Printf("invalid param count.")
@@ -40,21 +45,20 @@ func (self *EncryptOpAes) Init(direct bool, params []interface{}) bool {
 	return true
 }
 
+func (self *encryptOpAes) Operate(input interface{}, output interface{}) (bool, error) {
 
-func (self *EncryptOpAes) Operate(input interface{}, output interface{}) (bool, error){
-
-	if self.direct{
+	if self.direct {
 		tmpOutput, err := self.Encrypt(input.([]byte))
-		if err != nil{
+		if err != nil {
 			fmt.Printf("pack failed. err: %s", err)
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
 		return true, nil
 
-	}else{
+	} else {
 		tmpOutput, err := self.Decrypt(input.([]byte))
-		if err != nil{
+		if err != nil {
 			fmt.Printf("unpack failed. err: %s", err)
 			return false, err
 		}
@@ -65,9 +69,9 @@ func (self *EncryptOpAes) Operate(input interface{}, output interface{}) (bool, 
 	return true, nil
 }
 
-func (self *EncryptOpAes) Encrypt(data []byte) ([]byte, error) {
+func (self *encryptOpAes) Encrypt(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("EncryptOpAes.Encrypt")()
+	defer log.TraceLog("encryptOpAes.Encrypt")()
 	if data == nil || self.aesKey == nil {
 		return nil, errors.New("invalid self.aesKey or data")
 	}
@@ -99,9 +103,9 @@ func (self *EncryptOpAes) Encrypt(data []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func (self *EncryptOpAes) Decrypt(data []byte) ([]byte, error) {
+func (self *encryptOpAes) Decrypt(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("EncryptOpAes.Decrypt")()
+	defer log.TraceLog("encryptOpAes.Decrypt")()
 	block, err := aes.NewCipher(self.aesKey)
 	if err != nil {
 		panic(err)
