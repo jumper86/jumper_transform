@@ -9,23 +9,21 @@ import (
 )
 
 type packetOpBinary struct {
-	direct bool
 }
 
-func NewpacketOpBinary(direct bool, params []interface{}) interf.PacketOp {
+func NewpacketOpBinary(params []interface{}) interf.PacketOp {
 	var op packetOpBinary
-	op.init(direct, params)
+	op.init(params)
 	return &op
 }
 
-func (self *packetOpBinary) init(direct bool, params []interface{}) bool {
-	self.direct = direct
+func (self *packetOpBinary) init(params []interface{}) bool {
 	return true
 }
 
-func (self *packetOpBinary) Operate(input interface{}, output interface{}) (bool, error) {
+func (self *packetOpBinary) Operate(direct int8, input interface{}, output interface{}) (bool, error) {
 
-	if self.direct {
+	if direct == interf.Forward {
 		tmpOutput, err := self.Pack(input)
 		if err != nil {
 			fmt.Printf("pack failed. err: %s", err)
