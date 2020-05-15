@@ -318,7 +318,8 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 		Male: true,
 	}
 
-	var polink transform.Transform
+	polink := transform.Newtransform()
+
 	polink.AddOp(interf.PacketJson, true, nil)
 	//polink.AddOp(transform.PacketXml, true, nil)
 

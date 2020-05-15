@@ -22,11 +22,16 @@ import (
 
 //因此在实际项目使用中可以考虑定义一个全局的 map[string]Transform　不同的需求定义不同的　Transform　放入其中．
 
-type Transform struct {
+type transform struct {
 	opLink []interf.Operation
 }
 
-func (self *Transform) checkParam(opType interf.OperationType, direct bool, params []interface{}) bool {
+func Newtransform() interf.Transform {
+	var tf transform
+	return &tf
+}
+
+func (self *transform) checkParam(opType interf.OperationType, direct bool, params []interface{}) bool {
 	if opType <= interf.PackageOpMin || opType >= interf.PackageOpMax {
 		fmt.Println("invalid opType.")
 		return false
@@ -50,7 +55,7 @@ func (self *Transform) checkParam(opType interf.OperationType, direct bool, para
 	return true
 }
 
-func (self *Transform) AddOp(opType interf.OperationType, direct bool, params []interface{}) bool {
+func (self *transform) AddOp(opType interf.OperationType, direct bool, params []interface{}) bool {
 	if !self.checkParam(opType, direct, params) {
 		return false
 	}
@@ -115,7 +120,7 @@ func (self *Transform) AddOp(opType interf.OperationType, direct bool, params []
 
 }
 
-func (self *Transform) Execute(input interface{}, output interface{}) error {
+func (self *transform) Execute(input interface{}, output interface{}) error {
 
 	//这里是一个链式反应，因此需要根据op类型来构建中间类型
 	//中间过程的输出都是 []byte
@@ -142,7 +147,7 @@ func (self *Transform) Execute(input interface{}, output interface{}) error {
 	return nil
 }
 
-func (self *Transform) Reset() {
+func (self *transform) Reset() {
 	if len(self.opLink) != 0 {
 		self.opLink = self.opLink[:0]
 	}

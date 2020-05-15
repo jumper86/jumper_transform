@@ -35,21 +35,3 @@ type Operation interface {
 	//Init(direct bool, params []interface{}) bool //direct 表示操作方向, true　表示　编码/压缩/加密，　false 表示　解码/解压/解密
 	Operate(input interface{}, output interface{}) (bool, error)
 }
-
-type PacketOp interface {
-	Operation
-	Pack(originData interface{}) ([]byte, error)
-	Unpack(packData []byte, obj interface{}) error
-}
-
-type CompressOp interface {
-	Operation
-	Compress(data []byte) ([]byte, error)
-	Decompress(data []byte) ([]byte, error)
-}
-
-type EncryptOp interface {
-	Operation
-	Encrypt(data []byte) ([]byte, error)
-	Decrypt(data []byte) ([]byte, error)
-}
