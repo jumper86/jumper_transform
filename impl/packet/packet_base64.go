@@ -2,11 +2,13 @@ package packet
 
 import (
 	"encoding/base64"
-	"errors"
-	"fmt"
-	"github.com/jumper86/jumper_transform/interf"
-	"github.com/jumper86/jumper_transform/log"
 	"reflect"
+
+	"github.com/jumper86/jumper_transform/interf"
+
+	"github.com/jumper86/jumper_transform/def"
+
+	"github.com/jumper86/jumper_transform/log"
 )
 
 type packetOpBase64 struct {
@@ -24,10 +26,10 @@ func (self *packetOpBase64) init(params []interface{}) bool {
 
 func (self *packetOpBase64) Operate(direct int8, input interface{}, output interface{}) (bool, error) {
 
-	if direct == interf.Forward {
+	if direct == def.Forward {
 		tmpOutput, err := self.Pack(input)
 		if err != nil {
-			fmt.Printf("pack failed. err: %s", err)
+
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
@@ -36,7 +38,7 @@ func (self *packetOpBase64) Operate(direct int8, input interface{}, output inter
 	} else {
 		err := self.Unpack(input.([]byte), output)
 		if err != nil {
-			fmt.Printf("unpack failed. err: %s", err)
+
 			return false, err
 		}
 		return true, nil
@@ -52,8 +54,8 @@ func (*packetOpBase64) Pack(originData interface{}) ([]byte, error) {
 	vod := reflect.ValueOf(originData)
 	tod := reflect.TypeOf(originData)
 	if vod.IsValid() == false {
-		fmt.Println("originData's value is nil.")
-		return nil, errors.New("originData's value is nil")
+
+		return nil, def.ErrParamShouldNotNil
 	}
 
 	if vod.Kind() == reflect.String {
@@ -71,8 +73,7 @@ func (*packetOpBase64) Pack(originData interface{}) ([]byte, error) {
 		return rst, nil
 	}
 
-	fmt.Println("invalid param type.")
-	return nil, errors.New("invalid param type, use string or []byte.")
+	return nil, def.ErrParamShouldStringOrBytes
 }
 
 func (*packetOpBase64) Unpack(packData []byte, obj interface{}) error {
@@ -85,14 +86,13 @@ func (*packetOpBase64) Unpack(packData []byte, obj interface{}) error {
 	//这里需要注意区别 reflect.Value.Elem() 和 reflect.Type.Elem() 两个函数
 	//要想查看 指针/数组/切片 等的元素类型应该使用 reflect.Type.Elem() 函数
 	if vod.Kind() != reflect.Ptr || tod.Elem().Kind() != reflect.Slice || tod.Elem().Elem().Kind() != reflect.Uint8 {
-		return errors.New("invalid param, should use *[]byte")
+		return def.ErrParamShouldPointOfByteSlice
 	}
 
 	rst := make([]byte, base64.StdEncoding.DecodedLen(len(packData)))
 	_, err := base64.StdEncoding.Decode(rst, packData)
 	if err != nil {
-		fmt.Println("decode failed, err:", err)
-		return errors.New("decode failed.")
+		return def.ErrDecodeFailed
 	}
 
 	//类型是指针，需要使用Elem获得指针指向的内存，然后进行值的设置

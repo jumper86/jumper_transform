@@ -3,10 +3,13 @@ package compress
 import (
 	"bytes"
 	"compress/gzip"
-	"fmt"
-	"github.com/jumper86/jumper_transform/interf"
-	"github.com/jumper86/jumper_transform/log"
 	"io"
+
+	"github.com/jumper86/jumper_transform/def"
+
+	"github.com/jumper86/jumper_transform/interf"
+
+	"github.com/jumper86/jumper_transform/log"
 )
 
 type compressOpGzip struct {
@@ -24,10 +27,9 @@ func (self *compressOpGzip) init(params []interface{}) bool {
 
 func (self *compressOpGzip) Operate(direct int8, input interface{}, output interface{}) (bool, error) {
 
-	if direct == interf.Forward {
+	if direct == def.Forward {
 		tmpOutput, err := self.Compress(input.([]byte))
 		if err != nil {
-			fmt.Printf("pack failed. err: %s", err)
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
@@ -36,7 +38,6 @@ func (self *compressOpGzip) Operate(direct int8, input interface{}, output inter
 	} else {
 		tmpOutput, err := self.Decompress(input.([]byte))
 		if err != nil {
-			fmt.Printf("unpack failed. err: %s", err)
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
@@ -54,7 +55,6 @@ func (self *compressOpGzip) Compress(data []byte) ([]byte, error) {
 
 	_, err := c.Write(data)
 	if err != nil {
-		fmt.Printf("compress err: %s", err)
 		return nil, err
 	}
 
@@ -71,7 +71,6 @@ func (self *compressOpGzip) Decompress(data []byte) ([]byte, error) {
 	nr := bytes.NewReader(data)
 	dc, err := gzip.NewReader(nr)
 	if err != nil {
-		fmt.Printf("decompress 1 err: %s", err)
 		return nil, err
 	}
 	defer dc.Close()
@@ -79,7 +78,6 @@ func (self *compressOpGzip) Decompress(data []byte) ([]byte, error) {
 	var buf bytes.Buffer
 	_, err = io.Copy(&buf, dc)
 	if err != nil {
-		fmt.Printf("decompress err: %s", err)
 		return nil, err
 	}
 

@@ -4,11 +4,13 @@ import (
 	"crypto/cipher"
 	"crypto/des"
 	"crypto/rand"
-	"errors"
-	"fmt"
-	"github.com/jumper86/jumper_transform/interf"
-	"github.com/jumper86/jumper_transform/log"
 	"io"
+
+	"github.com/jumper86/jumper_transform/interf"
+
+	"github.com/jumper86/jumper_transform/def"
+
+	"github.com/jumper86/jumper_transform/log"
 )
 
 type encryptOpDes struct {
@@ -24,19 +26,19 @@ func NewencryptOpDes(params []interface{}) interf.EncryptOp {
 func (self *encryptOpDes) init(params []interface{}) bool {
 
 	if params == nil || len(params) != 1 {
-		fmt.Printf("invalid param count.")
+
 		return false
 	}
 
 	var ok bool
 	self.desKey, ok = params[0].([]byte)
 	if !ok {
-		fmt.Printf("invalid param type ")
+
 		return false
 	}
 
 	if len(self.desKey) != 64/8 {
-		fmt.Println("err desKey length, need 128/192/256 bit.")
+
 		return false
 	}
 
@@ -45,10 +47,10 @@ func (self *encryptOpDes) init(params []interface{}) bool {
 
 func (self *encryptOpDes) Operate(direct int8, input interface{}, output interface{}) (bool, error) {
 
-	if direct == interf.Forward {
+	if direct == def.Forward {
 		tmpOutput, err := self.Encrypt(input.([]byte))
 		if err != nil {
-			fmt.Printf("pack failed. err: %s", err)
+
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
@@ -57,7 +59,7 @@ func (self *encryptOpDes) Operate(direct int8, input interface{}, output interfa
 	} else {
 		tmpOutput, err := self.Decrypt(input.([]byte))
 		if err != nil {
-			fmt.Printf("unpack failed. err: %s", err)
+
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
@@ -70,8 +72,11 @@ func (self *encryptOpDes) Operate(direct int8, input interface{}, output interfa
 func (self *encryptOpDes) Encrypt(data []byte) ([]byte, error) {
 
 	defer log.TraceLog("encryptOpDes.Encrypt")()
-	if data == nil || self.desKey == nil {
-		return nil, errors.New("invalid self.desKey or data")
+	if self.desKey == nil {
+		return nil, def.ErrInvalidDesKey
+	}
+	if data == nil {
+		return nil, def.ErrParamShouldNotNil
 	}
 
 	block, err := des.NewCipher(self.desKey)
@@ -97,7 +102,7 @@ func (self *encryptOpDes) Encrypt(data []byte) ([]byte, error) {
 	// (i.e. by using crypto/hmac) as well as being encrypted in order to
 	// be secure.
 
-	//fmt.Printf("%x\n", ciphertext)
+	//
 	return ciphertext, nil
 }
 
@@ -131,6 +136,6 @@ func (self *encryptOpDes) Decrypt(data []byte) ([]byte, error) {
 
 	data = pKCS5UnPadding(data)
 
-	//fmt.Printf("%s\n", data)
+	//
 	return data, nil
 }

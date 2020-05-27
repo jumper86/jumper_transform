@@ -5,9 +5,11 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"errors"
-	"fmt"
+
 	"github.com/jumper86/jumper_transform/interf"
+
+	"github.com/jumper86/jumper_transform/def"
+
 	"github.com/jumper86/jumper_transform/log"
 )
 
@@ -24,24 +26,24 @@ func NewencryptOpRsa(params []interface{}) interf.EncryptOp {
 
 func (self *encryptOpRsa) init(params []interface{}) bool {
 	if len(params) != 2 {
-		fmt.Printf("invalid param count.")
+
 		return false
 	}
 
 	var ok bool
 	self.rsaPublicKeyRemote, ok = params[0].([]byte)
 	if !ok {
-		fmt.Printf("invalid param type ")
+
 		return false
 	}
 	self.rsaPrivateKeyLocal, ok = params[1].([]byte)
 	if !ok {
-		fmt.Printf("invalid param type ")
+
 		return false
 	}
 
 	if len(self.rsaPrivateKeyLocal) > 2048 {
-		fmt.Printf("invalid param type ")
+
 		return false
 	}
 
@@ -50,10 +52,10 @@ func (self *encryptOpRsa) init(params []interface{}) bool {
 
 func (self *encryptOpRsa) Operate(direct int8, input interface{}, output interface{}) (bool, error) {
 
-	if direct == interf.Forward {
+	if direct == def.Forward {
 		tmpOutput, err := self.Encrypt(input.([]byte))
 		if err != nil {
-			fmt.Printf("pack failed. err: %s", err)
+
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
@@ -62,7 +64,7 @@ func (self *encryptOpRsa) Operate(direct int8, input interface{}, output interfa
 	} else {
 		tmpOutput, err := self.Decrypt(input.([]byte))
 		if err != nil {
-			fmt.Printf("unpack failed. err: %s", err)
+
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
@@ -77,13 +79,12 @@ func (self *encryptOpRsa) Encrypt(data []byte) ([]byte, error) {
 	defer log.TraceLog("encryptOpRsa.Encrypt")()
 	block, _ := pem.Decode(self.rsaPublicKeyRemote)
 	if block == nil {
-		return nil, errors.New("public key error")
+		return nil, def.ErrInvalidRsaPublicKey
 
 	}
 	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
 		return nil, err
-
 	}
 	pub := pubInterface.(*rsa.PublicKey)
 	return rsa.EncryptPKCS1v15(rand.Reader, pub, data)
@@ -94,7 +95,7 @@ func (self *encryptOpRsa) Decrypt(data []byte) ([]byte, error) {
 	defer log.TraceLog("encryptOpRsa.Decrypt")()
 	block, _ := pem.Decode(self.rsaPrivateKeyLocal)
 	if block == nil {
-		return nil, errors.New("private key error!")
+		return nil, def.ErrInvalidRsaPrivateKey
 
 	}
 	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)

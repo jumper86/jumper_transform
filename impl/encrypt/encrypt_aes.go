@@ -4,11 +4,13 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"errors"
-	"fmt"
-	"github.com/jumper86/jumper_transform/interf"
-	"github.com/jumper86/jumper_transform/log"
 	"io"
+
+	"github.com/jumper86/jumper_transform/interf"
+
+	"github.com/jumper86/jumper_transform/def"
+
+	"github.com/jumper86/jumper_transform/log"
 )
 
 type encryptOpAes struct {
@@ -24,19 +26,19 @@ func NewencryptOpAes(params []interface{}) interf.EncryptOp {
 func (self *encryptOpAes) init(params []interface{}) bool {
 
 	if params == nil || len(params) != 1 {
-		fmt.Printf("invalid param count.")
+
 		return false
 	}
 
 	var ok bool
 	self.aesKey, ok = params[0].([]byte)
 	if !ok {
-		fmt.Printf("invalid param type ")
+
 		return false
 	}
 
 	if len(self.aesKey) != 128/8 && len(self.aesKey) != 192/8 && len(self.aesKey) != 256/8 {
-		fmt.Println("err aesKey length, need 128/192/256 bit.")
+
 		return false
 	}
 
@@ -45,10 +47,10 @@ func (self *encryptOpAes) init(params []interface{}) bool {
 
 func (self *encryptOpAes) Operate(direct int8, input interface{}, output interface{}) (bool, error) {
 
-	if direct == interf.Forward {
+	if direct == def.Forward {
 		tmpOutput, err := self.Encrypt(input.([]byte))
 		if err != nil {
-			fmt.Printf("pack failed. err: %s", err)
+
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
@@ -57,7 +59,7 @@ func (self *encryptOpAes) Operate(direct int8, input interface{}, output interfa
 	} else {
 		tmpOutput, err := self.Decrypt(input.([]byte))
 		if err != nil {
-			fmt.Printf("unpack failed. err: %s", err)
+
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
@@ -70,8 +72,11 @@ func (self *encryptOpAes) Operate(direct int8, input interface{}, output interfa
 func (self *encryptOpAes) Encrypt(data []byte) ([]byte, error) {
 
 	defer log.TraceLog("encryptOpAes.Encrypt")()
-	if data == nil || self.aesKey == nil {
-		return nil, errors.New("invalid self.aesKey or data")
+	if self.aesKey == nil {
+		return nil, def.ErrInvalidAesKey
+	}
+	if data == nil {
+		return nil, def.ErrParamShouldNotNil
 	}
 
 	block, err := aes.NewCipher(self.aesKey)
@@ -97,7 +102,7 @@ func (self *encryptOpAes) Encrypt(data []byte) ([]byte, error) {
 	// (i.e. by using crypto/hmac) as well as being encrypted in order to
 	// be secure.
 
-	//fmt.Printf("%x\n", ciphertext)
+	//
 	return ciphertext, nil
 }
 
@@ -139,6 +144,6 @@ func (self *encryptOpAes) Decrypt(data []byte) ([]byte, error) {
 	// using crypto/hmac) before being decrypted in order to avoid creating
 	// a padding oracle.
 
-	//fmt.Printf("%s\n", data)
+	//
 	return data, nil
 }

@@ -2,9 +2,11 @@ package packet
 
 import (
 	"encoding/binary"
-	"errors"
-	"fmt"
+
 	"github.com/jumper86/jumper_transform/interf"
+
+	"github.com/jumper86/jumper_transform/def"
+
 	"github.com/jumper86/jumper_transform/log"
 )
 
@@ -23,10 +25,9 @@ func (self *packetOpBinary) init(params []interface{}) bool {
 
 func (self *packetOpBinary) Operate(direct int8, input interface{}, output interface{}) (bool, error) {
 
-	if direct == interf.Forward {
+	if direct == def.Forward {
 		tmpOutput, err := self.Pack(input)
 		if err != nil {
-			fmt.Printf("pack failed. err: %s", err)
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
@@ -35,7 +36,6 @@ func (self *packetOpBinary) Operate(direct int8, input interface{}, output inter
 	} else {
 		err := self.Unpack(input.([]byte), output)
 		if err != nil {
-			fmt.Printf("unpack failed. err: %s", err)
 			return false, err
 		}
 		return true, nil
@@ -49,7 +49,7 @@ func (*packetOpBinary) Pack(originData interface{}) ([]byte, error) {
 	defer log.TraceLog("packetOpBinary.Pack")()
 	msg, ok := originData.(*interf.Message)
 	if !ok {
-		return nil, errors.New("invalid param type, use interf.Message struct.")
+		return nil, def.ErrParamShouldImplInterfMsg
 	}
 
 	rst := make([]byte, len(msg.Content)+2)
@@ -66,7 +66,7 @@ func (*packetOpBinary) Unpack(packData []byte, obj interface{}) error {
 	var msg *interf.Message
 	var ok bool
 	if msg, ok = obj.(*interf.Message); !ok {
-		return errors.New("invalid param type, use interf.Message struct.")
+		return def.ErrParamShouldImplInterfMsg
 	}
 
 	msg.Type = binary.BigEndian.Uint16(packData[:2])

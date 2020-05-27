@@ -2,9 +2,11 @@ package encrypt
 
 import (
 	"crypto/md5"
-	"errors"
-	"fmt"
+
 	"github.com/jumper86/jumper_transform/interf"
+
+	"github.com/jumper86/jumper_transform/def"
+
 	"github.com/jumper86/jumper_transform/log"
 )
 
@@ -23,18 +25,18 @@ func (self *encryptOpMd5) init(params []interface{}) bool {
 
 func (self *encryptOpMd5) Operate(direct int8, input interface{}, output interface{}) (bool, error) {
 
-	if direct == interf.Forward {
+	if direct == def.Forward {
 		tmpOutput, err := self.Encrypt(input.([]byte))
 		if err != nil {
-			fmt.Printf("pack failed. err: %s", err)
+
 			return false, err
 		}
 		*(output.(*[]byte)) = tmpOutput
 		return true, nil
 
 	} else {
-		fmt.Println("md5 couldn't decrypt.")
-		return false, errors.New("md5 couldn't decrypt.")
+
+		return false, def.ErrMd5NoDecrypt
 	}
 
 	return true, nil
@@ -50,5 +52,5 @@ func (*encryptOpMd5) Encrypt(data []byte) ([]byte, error) {
 
 func (*encryptOpMd5) Decrypt(data []byte) ([]byte, error) {
 	defer log.TraceLog("encryptOpMd5.Decrypt")()
-	return nil, errors.New("md5 couldn't decrypt.")
+	return nil, def.ErrMd5NoDecrypt
 }

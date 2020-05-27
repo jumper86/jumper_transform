@@ -1,12 +1,15 @@
 package main
 
 import (
-	"github.com/golang/protobuf/proto"
-	"github.com/jumper86/jumper_transform/impl/packet"
-	"github.com/jumper86/jumper_transform/impl/transform"
+	"fmt"
+
+	"github.com/jumper86/jumper_transform/def"
+
+	"github.com/jumper86/jumper_transform"
+
 	"github.com/jumper86/jumper_transform/interf"
 
-	"fmt"
+	"github.com/golang/protobuf/proto"
 )
 
 func main() {
@@ -318,32 +321,32 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 		Male: true,
 	}
 
-	polink := transform.Newtransform()
+	polink := jumper_transform.Newtransform()
 
-	polink.AddOp(interf.PacketJson, nil)
-	//polink.AddOp(interf.PacketXml, true, nil)
+	polink.AddOp(def.PacketJson, nil)
+	//polink.AddOp(jumper_transform.PacketXml, true, nil)
 
-	polink.AddOp(interf.CompressGzip, nil)
-	//polink.AddOp(interf.CompressZlib, true, nil)
+	polink.AddOp(def.CompressGzip, nil)
+	//polink.AddOp(jumper_transform.CompressZlib, true, nil)
 
-	//polink.AddOp(interf.EncryptAes, []interface{}{[]byte("abcdefghijklmnop")})
-	//polink.AddOp(interf.EncryptDes, []interface{}{[]byte("ijklmnop")})
-	polink.AddOp(interf.EncryptRsa, []interface{}{PubKeyRemote, PrivKeyLocal})
+	//polink.AddOp(jumper_transform.EncryptAes, []interface{}{[]byte("abcdefghijklmnop")})
+	//polink.AddOp(jumper_transform.EncryptDes, []interface{}{[]byte("ijklmnop")})
+	polink.AddOp(def.EncryptRsa, []interface{}{PubKeyRemote, PrivKeyLocal})
 	var rst1 []byte
-	err := polink.Execute(interf.Forward, test1, &rst1)
+	err := polink.Execute(def.Forward, test1, &rst1)
 	if err != nil {
 		fmt.Printf("err: %s", err)
 		return
 	}
 
 	var test2 s1
-	err = polink.Execute(interf.Backward, rst1, &test2)
+	err = polink.Execute(def.Backward, rst1, &test2)
 	if err != nil {
 		fmt.Printf("err: %s", err)
 		return
 	}
 
-	fmt.Printf("test2: %v\n", test2)
+	fmt.Printf("result: %v\n", test2)
 	fmt.Printf("origin data: %v\n", test1)
 
 	fmt.Println("--------------------------------------------------------")
@@ -352,34 +355,34 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 	polink.Reset()
 	bodyData := "guangzhou/fangcun/vip/company"
 
-	p := &packet.StringMessage{
+	p := &StringMessage{
 		Body: proto.String(bodyData),
-		Header: &packet.Header{
+		Header: &Header{
 			MessageId: proto.String("20-05"),
 			Topic:     proto.String("golang"),
 		},
 	}
 
-	//polink.AddOp(interf.PacketJson,  nil)
-	//polink.AddOp(interf.PacketXml,  nil)
-	polink.AddOp(interf.PacketProtobuf, nil)
-	polink.AddOp(interf.CompressGzip, nil)
-	polink.AddOp(interf.EncryptRsa, []interface{}{PubKeyRemote, PrivKeyLocal})
+	//polink.AddOp(jumper_transform.PacketJson,  nil)
+	//polink.AddOp(jumper_transform.PacketXml,  nil)
+	polink.AddOp(def.PacketProtobuf, nil)
+	polink.AddOp(def.CompressGzip, nil)
+	polink.AddOp(def.EncryptRsa, []interface{}{PubKeyRemote, PrivKeyLocal})
 	var rst11 []byte
-	err = polink.Execute(interf.Forward, p, &rst11)
+	err = polink.Execute(def.Forward, p, &rst11)
 	if err != nil {
 		fmt.Printf("err: %s", err)
 		return
 	}
 
-	var protobufrst packet.StringMessage
-	err = polink.Execute(interf.Backward, rst11, &protobufrst)
+	var protobufrst StringMessage
+	err = polink.Execute(def.Backward, rst11, &protobufrst)
 	if err != nil {
 		fmt.Printf("err: %s", err)
 		return
 	}
 
-	fmt.Printf("protobufrst: %s\n", protobufrst.String())
+	fmt.Printf("result: %s\n", protobufrst.String())
 	fmt.Printf("origin data: %s\n", p.String())
 
 	fmt.Println("--------------------------------------------------------")
@@ -388,24 +391,24 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 		Content: []byte("this is a Message."),
 	}
 	polink.Reset()
-	polink.AddOp(interf.PacketBinary, nil)
-	polink.AddOp(interf.CompressGzip, nil)
-	polink.AddOp(interf.EncryptRsa, []interface{}{PubKeyRemote, PrivKeyLocal})
+	polink.AddOp(def.PacketBinary, nil)
+	polink.AddOp(def.CompressGzip, nil)
+	polink.AddOp(def.EncryptRsa, []interface{}{PubKeyRemote, PrivKeyLocal})
 	var rst12 []byte
-	err = polink.Execute(interf.Forward, msg, &rst12)
+	err = polink.Execute(def.Forward, msg, &rst12)
 	if err != nil {
 		fmt.Printf("err: %s", err)
 		return
 	}
 
 	var msgrst interf.Message
-	err = polink.Execute(interf.Backward, rst12, &msgrst)
+	err = polink.Execute(def.Backward, rst12, &msgrst)
 	if err != nil {
 		fmt.Printf("err: %s", err)
 		return
 	}
 
-	fmt.Printf("msgrst: %v\n", msgrst)
+	fmt.Printf("result: %v\n", msgrst)
 	fmt.Printf("origin data: %v\n", msg)
 
 }
