@@ -32,7 +32,7 @@ var (
 	ErrParamShouldNotNil           = jumper_error.New(ErrParamShouldNotNilCode, "param should not be nil.")
 	ErrParamShouldStringOrBytes    = jumper_error.New(ErrParamShouldStringOrBytesCode, "param should be string or []byte.")
 	ErrParamShouldPointOfByteSlice = jumper_error.New(ErrParamShouldPointOfByteSliceCode, "param should be *[]byte.")
-	ErrParamShouldImplInterfMsg    = jumper_error.New(ErrParamShouldImplInterfMsgCode, "param should implement interf.Message.")
+	ErrParamShouldImplInterfMsg    = jumper_error.New(ErrParamShouldImplInterfMsgCode, "param should be pointer of interf.Message.")
 	ErrParamShouldImplProtoMsg     = jumper_error.New(ErrParamShouldImplProtoMsgCode, "param should implement proto.Message.")
 	ErrDecodeFailed                = jumper_error.New(ErrDecodeFailedCode, "decode failed.")
 )

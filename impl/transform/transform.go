@@ -63,6 +63,10 @@ func (self *Transform) AddOp(opType int8, params []interface{}) bool {
 		op = packet.NewpacketOpBase64(nil)
 		break
 
+	case def.PacketBase64RawUrl:
+		op = packet.NewpacketOpBase64RawUrl(nil)
+		break
+
 	case def.PacketJson:
 		op = packet.NewpacketOpJson(nil)
 		break

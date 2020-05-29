@@ -89,8 +89,8 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 	/////////////////////////// protobuf ///////////////////////////
 
 	polink.Reset()
-	bodyData := "guangzhou/fangcun/vip/company"
-
+	//bodyData := "guangzhou/fangcun/vip/company"
+	bodyData := "test protobuf"
 	p := &StringMessage{
 		Body: proto.String(bodyData),
 		Header: &Header{
@@ -101,10 +101,10 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 
 	polink.AddOp(def.PacketProtobuf, nil)
 	//polink.AddOp(def.CompressGzip, nil)
-	polink.AddOp(def.CompressZlib, nil)
+	//polink.AddOp(def.CompressZlib, nil)
 	//polink.AddOp(def.EncryptAes, []interface{}{[]byte("abcdefghijklmnop")})
 	//polink.AddOp(def.EncryptDes, []interface{}{[]byte("ijklmnop")})
-	polink.AddOp(def.EncryptRsa, []interface{}{PubKeyRemote, PrivKeyLocal})
+	//polink.AddOp(def.EncryptRsa, []interface{}{PubKeyRemote, PrivKeyLocal})
 	var rst11 []byte
 	err = polink.Execute(def.Forward, p, &rst11)
 	if err != nil {
@@ -112,6 +112,7 @@ BPzwDd0KoucklVVOS2vi1E7UV1bZhB60YdayCb9dcnEdA0uyA+qQgk2VhMtP1fER
 		return
 	}
 
+	fmt.Printf("=== rst: %x", rst11)
 	var protobufrst StringMessage
 	err = polink.Execute(def.Backward, rst11, &protobufrst)
 	if err != nil {

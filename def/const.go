@@ -9,6 +9,7 @@ const (
 	PackageOpMin int8 = 0 + iota
 	//封包
 	PacketBase64
+	PacketBase64RawUrl
 	PacketJson
 	PacketXml
 	PacketProtobuf
