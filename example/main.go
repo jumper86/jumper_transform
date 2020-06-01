@@ -31,7 +31,6 @@ pNiUmPu1pnWJDMTq6QJAHIToUuuAN2z3pLpUJsM40T6sEwgbxiFPZ3iT4/T2Tgpy
 BKLqQxR7jXKdl0iWYteC96pQ0bqytFse4lnmPMUCew==
 -----END RSA PRIVATE KEY-----
 `)
-	//fmt.Printf("%s", PrivKeyLocal)
 
 	PubKeyRemote := []byte(`
 -----BEGIN PUBLIC KEY-----
