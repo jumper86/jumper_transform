@@ -14,6 +14,7 @@ Encapsulate some common encoding, compression, encryption functions, provide abs
 
     //封包
    	PacketBase64
+   	PacketBase64RawUrl
    	PacketJson
    	PacketXml
    	PacketProtobuf
@@ -26,6 +27,7 @@ Encapsulate some common encoding, compression, encryption functions, provide abs
    	//加密
    	EncryptMd5
    	EncryptSha1
+   	EncryptSha256
    	EncryptAes
    	EncryptDes
    	EncryptRsa
