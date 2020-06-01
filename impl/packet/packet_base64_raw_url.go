@@ -2,7 +2,6 @@ package packet
 
 import (
 	"encoding/base64"
-	"fmt"
 	"reflect"
 
 	"github.com/jumper86/jumper_transform/interf"
@@ -37,7 +36,6 @@ func (self *packetOpBase64RawUrl) Operate(direct int8, input interface{}, output
 		return true, nil
 
 	} else {
-		fmt.Printf("len(input): %d\n", len(input.([]byte)))
 		err := self.Unpack(input.([]byte), output)
 		if err != nil {
 
