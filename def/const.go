@@ -22,6 +22,7 @@ const (
 	//加密
 	EncryptMd5
 	EncryptSha1
+	EncryptSha256
 	EncryptAes
 	EncryptDes
 	EncryptRsa

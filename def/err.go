@@ -5,26 +5,28 @@ import (
 )
 
 const (
-	ErrMd5NoDecryptCode  = 11001
-	ErrSha1NoDecryptCode = 11002
+	ErrMd5NoDecryptCode    = 11001
+	ErrSha1NoDecryptCode   = 11002
+	ErrSha256NoDecryptCode = 11003
 
-	ErrInvalidAesKeyCode = 11003
-	ErrInvalidDesKeyCode = 11004
+	ErrInvalidAesKeyCode = 11004
+	ErrInvalidDesKeyCode = 11005
 
-	ErrInvalidRsaPrivateKeyCode = 11005
-	ErrInvalidRsaPublicKeyCode  = 11006
+	ErrInvalidRsaPrivateKeyCode = 11006
+	ErrInvalidRsaPublicKeyCode  = 11007
 
-	ErrParamShouldNotNilCode           = 11007
-	ErrParamShouldStringOrBytesCode    = 11008
-	ErrParamShouldPointOfByteSliceCode = 11009
-	ErrParamShouldImplInterfMsgCode    = 11010
-	ErrParamShouldImplProtoMsgCode     = 11011
-	ErrDecodeFailedCode                = 11012
+	ErrParamShouldNotNilCode           = 11008
+	ErrParamShouldStringOrBytesCode    = 11009
+	ErrParamShouldPointOfByteSliceCode = 11010
+	ErrParamShouldImplInterfMsgCode    = 11011
+	ErrParamShouldImplProtoMsgCode     = 11012
+	ErrDecodeFailedCode                = 11013
 )
 
 var (
 	ErrMd5NoDecrypt                = jumper_error.New(ErrMd5NoDecryptCode, "md5 no decrypt.")
 	ErrSha1NoDecrypt               = jumper_error.New(ErrSha1NoDecryptCode, "sha1 no decrypt.")
+	ErrSha256NoDecrypt             = jumper_error.New(ErrSha256NoDecryptCode, "sha256 no decrypt.")
 	ErrInvalidAesKey               = jumper_error.New(ErrInvalidAesKeyCode, "invalid aes key.")
 	ErrInvalidDesKey               = jumper_error.New(ErrInvalidDesKeyCode, "invalid des key.")
 	ErrInvalidRsaPrivateKey        = jumper_error.New(ErrInvalidRsaPrivateKeyCode, "invalid rsa private key.")

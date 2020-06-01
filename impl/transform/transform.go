@@ -32,11 +32,6 @@ func (self *Transform) checkParam(opType int8, params []interface{}) bool {
 		return false
 	}
 
-	//if (opType == interf.EncryptMd5 || opType == interf.EncryptSha1) && !direct {
-	//
-	//	return false
-	//}
-
 	if (opType == def.EncryptAes || opType == def.EncryptDes) && len(params) != 1 {
 
 		return false
@@ -101,6 +96,10 @@ func (self *Transform) AddOp(opType int8, params []interface{}) bool {
 		op = encrypt.NewencryptOpSha1(nil)
 		break
 
+	case def.EncryptSha256:
+		op = encrypt.NewencryptOpSha256(nil)
+		break
+
 	case def.EncryptAes:
 		op = encrypt.NewencryptOpAes(params)
 		break
@@ -132,21 +131,6 @@ func (self *Transform) Execute(direct int8, input interface{}, output interface{
 	tmpInput = input
 
 	if direct == def.Forward {
-		//for k := range self.opLink {
-		//	if k == len(self.opLink)-1 {
-		//		rst, err := self.opLink[k].Operate(direct, tmpInput, output)
-		//		if !rst {
-		//
-		//			return err
-		//		}
-		//
-		//
-		//	} else {
-		//		self.opLink[k].Operate(direct, tmpInput, &tmpOutput)
-		//
-		//		tmpInput = tmpOutput
-		//	}
-		//}
 
 		for index := 0; index <= len(self.opLink)-1; index++ {
 			if index == len(self.opLink)-1 {

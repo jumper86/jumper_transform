@@ -44,7 +44,9 @@ func (self *encryptOpSha1) Operate(direct int8, input interface{}, output interf
 
 func (*encryptOpSha1) Encrypt(data []byte) ([]byte, error) {
 	defer log.TraceLog("encryptOpSha1.Encrypt")()
-	r := sha1.Sum(data)
+	s := sha1.New()
+	s.Write(data)
+	r := s.Sum(nil)
 	rst := r[:]
 	return rst, nil
 
