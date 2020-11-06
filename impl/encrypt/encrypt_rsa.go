@@ -10,7 +10,7 @@ import (
 
 	"github.com/jumper86/jumper_transform/def"
 
-	"github.com/jumper86/jumper_transform/log"
+	"github.com/jumper86/jumper_transform/util"
 )
 
 type encryptOpRsa struct {
@@ -76,7 +76,7 @@ func (self *encryptOpRsa) Operate(direct int8, input interface{}, output interfa
 
 func (self *encryptOpRsa) Encrypt(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("encryptOpRsa.Encrypt")()
+	defer util.TraceLog("encryptOpRsa.Encrypt")()
 	block, _ := pem.Decode(self.rsaPublicKeyRemote)
 	if block == nil {
 		return nil, def.ErrInvalidRsaPublicKey
@@ -92,7 +92,7 @@ func (self *encryptOpRsa) Encrypt(data []byte) ([]byte, error) {
 
 func (self *encryptOpRsa) Decrypt(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("encryptOpRsa.Decrypt")()
+	defer util.TraceLog("encryptOpRsa.Decrypt")()
 	block, _ := pem.Decode(self.rsaPrivateKeyLocal)
 	if block == nil {
 		return nil, def.ErrInvalidRsaPrivateKey

@@ -8,7 +8,7 @@ import (
 
 	"github.com/jumper86/jumper_transform/def"
 
-	"github.com/jumper86/jumper_transform/log"
+	"github.com/jumper86/jumper_transform/util"
 )
 
 type packetOpBase64RawUrl struct {
@@ -49,7 +49,7 @@ func (self *packetOpBase64RawUrl) Operate(direct int8, input interface{}, output
 
 //此函数中需要检查入参是否为 string / []byte
 func (*packetOpBase64RawUrl) Pack(originData interface{}) ([]byte, error) {
-	defer log.TraceLog("packetOpBase64RawUrl.Pack")()
+	defer util.TraceLog("packetOpBase64RawUrl.Pack")()
 	//需要判断入参类型为 string 或者 []byte
 	vod := reflect.ValueOf(originData)
 	tod := reflect.TypeOf(originData)
@@ -74,7 +74,7 @@ func (*packetOpBase64RawUrl) Pack(originData interface{}) ([]byte, error) {
 
 func (*packetOpBase64RawUrl) Unpack(packData []byte, obj interface{}) error {
 
-	defer log.TraceLog("packetOpBase64RawUrl.Unpack")()
+	defer util.TraceLog("packetOpBase64RawUrl.Unpack")()
 	//判断接收结果的入参是一个*[]byte
 	tod := reflect.TypeOf(obj)
 	vod := reflect.ValueOf(obj)

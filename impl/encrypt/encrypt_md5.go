@@ -7,7 +7,7 @@ import (
 
 	"github.com/jumper86/jumper_transform/def"
 
-	"github.com/jumper86/jumper_transform/log"
+	"github.com/jumper86/jumper_transform/util"
 )
 
 type encryptOpMd5 struct {
@@ -43,7 +43,7 @@ func (self *encryptOpMd5) Operate(direct int8, input interface{}, output interfa
 }
 
 func (*encryptOpMd5) Encrypt(data []byte) ([]byte, error) {
-	defer log.TraceLog("encryptOpMd5.Encrypt")()
+	defer util.TraceLog("encryptOpMd5.Encrypt")()
 	r := md5.Sum(data)
 	rst := r[:]
 	return rst, nil
@@ -51,6 +51,6 @@ func (*encryptOpMd5) Encrypt(data []byte) ([]byte, error) {
 }
 
 func (*encryptOpMd5) Decrypt(data []byte) ([]byte, error) {
-	defer log.TraceLog("encryptOpMd5.Decrypt")()
+	defer util.TraceLog("encryptOpMd5.Decrypt")()
 	return nil, def.ErrMd5NoDecrypt
 }

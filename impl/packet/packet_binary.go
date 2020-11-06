@@ -7,7 +7,7 @@ import (
 
 	"github.com/jumper86/jumper_transform/def"
 
-	"github.com/jumper86/jumper_transform/log"
+	"github.com/jumper86/jumper_transform/util"
 )
 
 type packetOpBinary struct {
@@ -46,7 +46,7 @@ func (self *packetOpBinary) Operate(direct int8, input interface{}, output inter
 
 //此函数中需要检查入参是否为 string / []byte
 func (*packetOpBinary) Pack(originData interface{}) ([]byte, error) {
-	defer log.TraceLog("packetOpBinary.Pack")()
+	defer util.TraceLog("packetOpBinary.Pack")()
 	msg, ok := originData.(*interf.Message)
 	if !ok {
 		return nil, def.ErrParamShouldImplInterfMsg
@@ -61,7 +61,7 @@ func (*packetOpBinary) Pack(originData interface{}) ([]byte, error) {
 
 func (*packetOpBinary) Unpack(packData []byte, obj interface{}) error {
 
-	defer log.TraceLog("packetOpBinary.Unpack")()
+	defer util.TraceLog("packetOpBinary.Unpack")()
 
 	var msg *interf.Message
 	var ok bool

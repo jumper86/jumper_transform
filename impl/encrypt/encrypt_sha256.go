@@ -7,7 +7,7 @@ import (
 
 	"github.com/jumper86/jumper_transform/def"
 
-	"github.com/jumper86/jumper_transform/log"
+	"github.com/jumper86/jumper_transform/util"
 )
 
 type encryptOpSha256 struct {
@@ -43,7 +43,7 @@ func (self *encryptOpSha256) Operate(direct int8, input interface{}, output inte
 }
 
 func (*encryptOpSha256) Encrypt(data []byte) ([]byte, error) {
-	defer log.TraceLog("encryptOpSha256.Encrypt")()
+	defer util.TraceLog("encryptOpSha256.Encrypt")()
 	s := sha256.New()
 	s.Write(data)
 	r := s.Sum(nil)
@@ -53,6 +53,6 @@ func (*encryptOpSha256) Encrypt(data []byte) ([]byte, error) {
 }
 
 func (*encryptOpSha256) Decrypt(data []byte) ([]byte, error) {
-	defer log.TraceLog("encryptOpSha256.Decrypt")()
+	defer util.TraceLog("encryptOpSha256.Decrypt")()
 	return nil, def.ErrSha1NoDecrypt
 }

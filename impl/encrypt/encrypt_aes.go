@@ -10,7 +10,7 @@ import (
 
 	"github.com/jumper86/jumper_transform/def"
 
-	"github.com/jumper86/jumper_transform/log"
+	"github.com/jumper86/jumper_transform/util"
 )
 
 type encryptOpAes struct {
@@ -71,7 +71,7 @@ func (self *encryptOpAes) Operate(direct int8, input interface{}, output interfa
 
 func (self *encryptOpAes) Encrypt(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("encryptOpAes.Encrypt")()
+	defer util.TraceLog("encryptOpAes.Encrypt")()
 	if self.aesKey == nil {
 		return nil, def.ErrInvalidAesKey
 	}
@@ -108,7 +108,7 @@ func (self *encryptOpAes) Encrypt(data []byte) ([]byte, error) {
 
 func (self *encryptOpAes) Decrypt(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("encryptOpAes.Decrypt")()
+	defer util.TraceLog("encryptOpAes.Decrypt")()
 	block, err := aes.NewCipher(self.aesKey)
 	if err != nil {
 		panic(err)

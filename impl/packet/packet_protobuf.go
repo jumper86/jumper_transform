@@ -5,7 +5,7 @@ import (
 	"github.com/jumper86/jumper_transform/interf"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/jumper86/jumper_transform/log"
+	"github.com/jumper86/jumper_transform/util"
 )
 
 type packetOpProtobuf struct {
@@ -47,7 +47,7 @@ func (self *packetOpProtobuf) Operate(direct int8, input interface{}, output int
 
 func (*packetOpProtobuf) Pack(originData interface{}) ([]byte, error) {
 	//此处需要将interface{} -> proto.Message， 使用类型断言即可
-	defer log.TraceLog("packetOpProtobuf.Pack")()
+	defer util.TraceLog("packetOpProtobuf.Pack")()
 	data, ok := originData.(proto.Message)
 	if !ok {
 		return nil, def.ErrParamShouldImplProtoMsg
@@ -58,7 +58,7 @@ func (*packetOpProtobuf) Pack(originData interface{}) ([]byte, error) {
 
 func (*packetOpProtobuf) Unpack(packData []byte, obj interface{}) error {
 
-	defer log.TraceLog("packetOpProtobuf.Unpack")()
+	defer util.TraceLog("packetOpProtobuf.Unpack")()
 	decodedData, ok := obj.(proto.Message)
 	if !ok {
 		return def.ErrParamShouldImplProtoMsg

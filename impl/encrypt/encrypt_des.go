@@ -10,7 +10,7 @@ import (
 
 	"github.com/jumper86/jumper_transform/def"
 
-	"github.com/jumper86/jumper_transform/log"
+	"github.com/jumper86/jumper_transform/util"
 )
 
 type encryptOpDes struct {
@@ -71,7 +71,7 @@ func (self *encryptOpDes) Operate(direct int8, input interface{}, output interfa
 
 func (self *encryptOpDes) Encrypt(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("encryptOpDes.Encrypt")()
+	defer util.TraceLog("encryptOpDes.Encrypt")()
 	if self.desKey == nil {
 		return nil, def.ErrInvalidDesKey
 	}
@@ -108,7 +108,7 @@ func (self *encryptOpDes) Encrypt(data []byte) ([]byte, error) {
 
 func (self *encryptOpDes) Decrypt(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("encryptOpDes.Decrypt")()
+	defer util.TraceLog("encryptOpDes.Decrypt")()
 	block, err := des.NewCipher(self.desKey)
 	if err != nil {
 		panic(err)

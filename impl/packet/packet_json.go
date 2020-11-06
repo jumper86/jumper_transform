@@ -8,7 +8,7 @@ import (
 
 	"github.com/jumper86/jumper_transform/interf"
 
-	"github.com/jumper86/jumper_transform/log"
+	"github.com/jumper86/jumper_transform/util"
 )
 
 type packetOpJson struct {
@@ -48,13 +48,13 @@ func (self *packetOpJson) Operate(direct int8, input interface{}, output interfa
 }
 
 func (*packetOpJson) Pack(originData interface{}) ([]byte, error) {
-	defer log.TraceLog("packetOpJson.Pack")()
+	defer util.TraceLog("packetOpJson.Pack")()
 
 	return json.Marshal(originData)
 }
 
 func (*packetOpJson) Unpack(packData []byte, obj interface{}) error {
-	defer log.TraceLog("packetOpJson.Unpack")()
+	defer util.TraceLog("packetOpJson.Unpack")()
 
 	//关于解析动态内容：interface{} 参见如下网页：
 	// http://cizixs.com/2016/12/19/golang-json-guide

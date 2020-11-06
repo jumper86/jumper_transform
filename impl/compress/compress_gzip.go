@@ -9,7 +9,7 @@ import (
 
 	"github.com/jumper86/jumper_transform/interf"
 
-	"github.com/jumper86/jumper_transform/log"
+	"github.com/jumper86/jumper_transform/util"
 )
 
 type compressOpGzip struct {
@@ -49,7 +49,7 @@ func (self *compressOpGzip) Operate(direct int8, input interface{}, output inter
 
 func (self *compressOpGzip) Compress(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("compressOpGzip.Compress")()
+	defer util.TraceLog("compressOpGzip.Compress")()
 	var buf bytes.Buffer
 	c := gzip.NewWriter(&buf)
 
@@ -67,7 +67,7 @@ func (self *compressOpGzip) Compress(data []byte) ([]byte, error) {
 
 func (self *compressOpGzip) Decompress(data []byte) ([]byte, error) {
 
-	defer log.TraceLog("compressOpGzip.Decompress")()
+	defer util.TraceLog("compressOpGzip.Decompress")()
 	nr := bytes.NewReader(data)
 	dc, err := gzip.NewReader(nr)
 	if err != nil {
